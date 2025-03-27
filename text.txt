@@ -1,0 +1,20 @@
+calorie-tracker/
+│── backend/         # 백엔드 (FastAPI)
+│   ├── main.py      # FastAPI 서버 코드
+│   ├── food_info.csv# 음식정보
+│── frontend/        # 프론트엔드 (HTML + JavaScript)
+│   ├── index.html   # 웹 페이지
+│   ├── script.js    # JavaScript 코드
+│── requirements.txt # 필요한 패키지 목록
+│── README.md        # 프로젝트 설명
+
+
+실행방식
+
+cd backend    # backend 디렉토리로 이동
+# 가상환경 권장 (선택)
+python -m venv venv           # 가상환경 만들기
+source venv/bin/activate      # (Mac/Linux)
+venv\Scripts\activate         # (Windows)
+
+python -m uvicorn main:app --reload
