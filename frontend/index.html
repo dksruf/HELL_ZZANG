@@ -1,124 +1,154 @@
 <!DOCTYPE html>
 <html lang="ko">
-<head>
-    <meta charset="UTF-8"> <!-- 문서의 문자 인코딩을 UTF-8로 설정 -->
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- 모바일 반응형 설정 -->
-    <title>HELL ZZANG</title> <!-- 웹 페이지 제목 -->
-    <script src="script.js" defer></script> <!-- script.js 파일을 연결하고, defer로 HTML 로딩 후 실행 -->
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>HELL ZZANG</title>
+    <script src="script.js" defer></script>
     <style>
       /* 기본 스타일 설정 */
-      html, body {
+      * {
         margin: 0;
         padding: 0;
-        font-family: sans-serif;
-        background-color: #fff;
+        box-sizing: border-box;
+        font-family: "Arial", sans-serif;
+      }
+
+      body {
+        background-color: #f4f4f4;
+        color: #333;
       }
 
       /* 상단 헤더 스타일 */
       header {
-        background-color: #fff;
-        padding: 5px 20px;
-        border-bottom: 1px solid #ccc;
-        position: fixed; /* 화면 최상단에 고정 */
+        background-color: #222;
+        color: #fff;
+        padding: 15px 20px;
+        text-align: center;
+        position: fixed;
         top: 0;
         left: 0;
         width: 100%;
-        z-index: 1000; /* 다른 요소보다 위에 위치 */
-      }
-
-      /* 헤더 내부 컨텐츠를 가운데 정렬 */
-      .header-inner {
-        display: flex;
-        align-items: center;
-        justify-content: center;
+        z-index: 1000;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
       }
 
       /* 메인 컨텐츠 영역 */
       .container {
-        margin-top: 60px; /* 고정 헤더로 인해 컨텐츠가 가려지지 않도록 여백 추가 */
+        margin-top: 80px;
         display: flex;
-        flex-wrap: wrap;
-        justify-content: center;
+        flex-wrap: nowrap; /* 줄바꿈 방지 */
+        justify-content: space-between; /* 요소 간격 균등 분배 */
+        gap: 10px;
         padding: 20px;
+      }
+
+      /* 카드 스타일 */
+      .card {
+        background: #fff;
+        border-radius: 12px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        padding: 20px;
+        text-align: center;
+        width: 23%; /* 너비 조정 (4개가 한 줄에 배치되도록) */
+        min-width: 200px; /* 너무 작아지는 것 방지 */
       }
 
       /* 이미지 업로드 영역 */
       .image-section {
-        border: 2px dashed #bbb; /* 점선 테두리 */
-        width: 300px;
-        height: 300px;
+        border: 2px dashed #007bff;
         display: flex;
         flex-direction: column;
         align-items: center;
         justify-content: center;
-        text-align: center;
-        margin: 10px;
-        background-color: #fff;
-      }
-
-      /* 이미지 미리보기 스타일 */
-      .image-preview {
-        max-width: 100%;
-        max-height: 100%;
-        display: none; /* 기본적으로 숨김 */
+        height: 300px;
       }
 
       /* 업로드 버튼 스타일 */
       .upload-btn {
-        margin-top: 10px;
-        padding: 10px;
-        background-color: #007bff;
+        margin-top: 15px;
+        padding: 12px 18px;
+        background: #007bff;
         color: white;
         border: none;
+        border-radius: 8px;
         cursor: pointer;
+        transition: 0.3s;
       }
- 
-      /* 목표 설정 영역 */
-      .goal-section, .food-details {
-        border: 1px solid #ccc;
-        padding: 20px;
-        margin: 10px;
-        width: 300px;
-        background-color: #fff;
+      .upload-btn:hover {
+        background: #0056b3;
+      }
+
+      /* 목표 설정 스타일 */
+      .goal-item {
+        display: flex;
+        justify-content: space-between;
+        margin: 10px 0;
+        font-size: 16px;
+      }
+
+      /* 음식 분석 결과 스타일 */
+      .food-details p {
+        font-size: 16px;
+        margin: 8px 0;
       }
     </style>
-</head>
-<body>
-  <!-- 상단 헤더 -->
-  <header>
-    <div class="header-inner">
+  </head>
+  <body>
+    <header>
       <h1>HELL ZZANG</h1>
-    </div>
-  </header>
+    </header>
 
-  <!-- 메인 컨텐츠 -->
-  <div class="container">
-    <!-- 음식 이미지 업로드 섹션 -->
-    <div class="image-section">
-      <input type="file" id="imageInput" accept="image/*"> <!-- 파일 선택 버튼 -->
-      <img id="preview" class="image-preview" alt="Image Preview"> <!-- 이미지 미리보기 -->
-      <button class="upload-btn" onclick="uploadImage()">분석하기</button> <!-- 분석 버튼 --> <!-- 1.여기에서 실제로 사진을 분석해서 칼로리 데이터를 가져오게하고싶다.-->
-    </div>
+    <div class="container">
+      <!-- 음식 이미지 업로드 섹션 -->
+      <div class="card image-section">
+        <input type="file" id="imageInput" accept="image/*" />
+        <img
+          id="preview"
+          class="image-preview"
+          style="
+            display: none;
+            width: 100%;
+            max-height: 200px;
+            margin-top: 10px;
+          "
+        />
+        <button class="upload-btn" onclick="uploadImage()">분석하기</button>
+      </div>
 
-    <!-- 오늘의 목표 섹션 -->
-    <div class="goal-section">
-      <h2>Today's goal</h2>
-      <div class="goal-item"><span>kcal: 1700 / 3200</span><input type="checkbox"></div>      <!-- 2.여기 값들이 실제로 변경 되게 해줬으면 좋겠어-->
-      <div class="goal-item"><span>carb.: 100 / 150</span><input type="checkbox"></div>
-      <div class="goal-item"><span>prot.: 150 / 200</span><input type="checkbox"></div>
-      <div class="goal-item"><span>fat: 200 / 200</span><input type="checkbox" checked></div>
-    </div>
-  </div>
+      <!-- 분석된 음식 리스트 -->
+      <div class="card analyzed-foods">
+        <h2>Today's food</h2>
+        <ul id="foodList"></ul>
+      </div>
 
-  <!-- 음식 분석 결과 표시 -->
-  <div class="food-details">
-    <h2>Food Details</h2>
-    <p><strong>Name:</strong> <span id="foodName">-</span></p>
-    <p><strong>Weight:</strong> 300g</p>
-    <p><strong>kcal:</strong> <span id="calories">-</span> kcal</p>
-    <p><strong>carb.:</strong> <span id="carbs">-</span> g</p>
-    <p><strong>prot.:</strong> <span id="protein">-</span> g</p>
-    <p><strong>fat:</strong> <span id="fat">-</span> g</p>
-  </div>
-</body>
+      <!-- 음식 상세 정보 -->
+      <div class="card food-details">
+        <h2>Food Details</h2>
+        <p><strong>Name:</strong> <span id="foodName">-</span></p>
+        <p><strong>Weight:</strong> 300g</p>
+        <p><strong>kcal:</strong> <span id="calories">-</span> kcal</p>
+        <p><strong>carb.:</strong> <span id="carbs">-</span> g</p>
+        <p><strong>prot.:</strong> <span id="protein">-</span> g</p>
+        <p><strong>fat:</strong> <span id="fat">-</span> g</p>
+      </div>
+
+      <!-- 오늘의 목표 -->
+      <div class="card goal-section">
+        <h2>Today's Goal</h2>
+        <div class="goal-item">
+          <span>kcal: 1700 / 3200</span><input type="checkbox" />
+        </div>
+        <div class="goal-item">
+          <span>carb.: 100 / 150</span><input type="checkbox" />
+        </div>
+        <div class="goal-item">
+          <span>prot.: 150 / 200</span><input type="checkbox" />
+        </div>
+        <div class="goal-item">
+          <span>fat: 200 / 200</span><input type="checkbox" checked />
+        </div>
+      </div>
+    </div>
+  </body>
 </html>
