@@ -102,12 +102,54 @@ function updateFoodList() {
   foodList.innerHTML = ""; // 기존 목록 초기화
 
   for (const [food, count] of Object.entries(foodTracker)) {
-    const listItem = document.createElement("li");
-    listItem.textContent = `${food} x${count}`;
-    foodList.appendChild(listItem);
+    if (count > 0) {
+      const listItem = document.createElement("li");
+      listItem.textContent = `${food} x${count}`;
+
+      const deleteButton = document.createElement("button");
+      deleteButton.textContent = "삭제";
+      deleteButton.style.marginLeft = "10px";
+      deleteButton.style.cursor = "pointer";
+      deleteButton.onclick = function () {
+        removeFood(food);
+      };
+
+      listItem.appendChild(deleteButton);
+      foodList.appendChild(listItem);
+    }
   }
 }
 
+function removeFood(food) {
+  if (foodTracker[food] > 1) {
+    foodTracker[food] -= 1;
+  } else {
+    delete foodTracker[food];
+  }
+  updateFoodList();
+  updateGoalsAfterRemoval(food);
+}
+function updateGoalsAfterRemoval(food) {
+  // 음식 데이터 가져오기 (이미 등록된 값에서 감소)
+  const calories =
+    parseFloat(document.getElementById("calories").textContent) || 0;
+  const carbs = parseFloat(document.getElementById("carbs").textContent) || 0;
+  const protein =
+    parseFloat(document.getElementById("protein").textContent) || 0;
+  const fats = parseFloat(document.getElementById("fat").textContent) || 0;
+
+  current.calories -= calories;
+  current.carbs -= carbs;
+  current.protein -= protein;
+  current.fats -= fats;
+
+  if (current.calories < 0) current.calories = 0;
+  if (current.carbs < 0) current.carbs = 0;
+  if (current.protein < 0) current.protein = 0;
+  if (current.fats < 0) current.fats = 0;
+
+  updateGoalsDisplay();
+}
 // 목표 수치 및 체크박스 상태 업데이트 함수
 function updateGoalsDisplay() {
   const goalSection = document.querySelector(".goal-section"); // 목표 영역 DOM 요소 가져오기
