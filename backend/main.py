@@ -1,5 +1,6 @@
 from fastapi import FastAPI, File, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
+import tensorflow as tf
 from tensorflow.keras.applications.inception_v3 import InceptionV3, preprocess_input, decode_predictions
 import numpy as np
 from PIL import Image
@@ -21,7 +22,33 @@ app.add_middleware(
 food_df = pd.read_csv("food_info.csv")  # CSV 파일에 음식, 칼로리, 영양성분 정보가 있어야 함
 
 # InceptionV3 모델 로드
-model = InceptionV3(weights="imagenet")
+#model = InceptionV3(weights="imagenet") -> 원래코드
+
+#==================모델선언=========================
+
+pretrained_model = tf.keras.applications.MobileNetV2(
+    input_shape=(224, 224, 3),
+    include_top=False,
+    weights='imagenet',
+    pooling='avg'
+)
+pretrained_model.trainable = False
+inputs = pretrained_model.input
+
+x = tf.keras.layers.Dense(128, activation='relu')(pretrained_model.output)
+x = tf.keras.layers.Dense(128, activation='relu')(x)
+
+outputs = tf.keras.layers.Dense(101, activation='softmax')(x)
+#outputs = tf.keras.layers.Dense(107, activation='softmax')(x)
+
+model = tf.keras.Model(inputs, outputs)
+
+
+#모델 불러오기
+model.load_weights("cp.ckpt.weights.h5")
+
+#==================모델선언=========================
+
 
 # 음식 예측 함수
 def classify_food(image_bytes):
