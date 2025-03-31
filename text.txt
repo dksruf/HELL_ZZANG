@@ -11,6 +11,9 @@ calorie-tracker/
 
 실행방식
 
+#관리자 권한한
+Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass 
+
 cd backend    # backend 디렉토리로 이동
 # 가상환경 권장 (선택)
 python -m venv venv           # 가상환경 만들기
