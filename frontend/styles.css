@@ -1,0 +1,152 @@
+body {
+    background-color: #2E4979;
+    color: white;
+    font-family: Arial, sans-serif;
+    text-align: center;
+    padding: 20px;
+}
+
+.header {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 20px;
+}
+
+.meal-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+    justify-content: center;
+    max-width: 400px;
+    margin: 0 auto;
+}
+
+.meal-card {
+    background: #3E5A91;
+    border-radius: 12px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+}
+
+.meal-icon {
+    font-size: 40px;
+    margin-bottom: 10px;
+}
+
+.meal-name {
+    font-size: 18px;
+    margin-bottom: 10px;
+}
+
+.add-btn {
+    background: white;
+    color: #2E4979;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: 0.3s;
+    margin: 5px;
+}
+
+.add-btn:hover {
+    background: #FFD700;
+}
+
+.remaining-calories {
+    background: #3E5A91;
+    border-radius: 12px;
+    padding: 20px;
+    margin-top: 15px;
+    max-width: 350px;
+    margin-left: auto;
+    margin-right: auto;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+}
+
+.image-section {
+    margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.upload-label {
+    display: inline-block;
+    background: white;
+    color: #2E4979;
+    padding: 8px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    margin: 10px 0;
+}
+
+.upload-label:hover {
+    background: #FFD700;
+}
+
+.image-preview {
+    max-width: 200px;
+    max-height: 200px;
+    margin: 10px auto;
+    display: block;
+}
+
+.food-details {
+    margin-top: 20px;
+}
+
+.food-details h2 {
+    font-size: 18px;
+    margin-bottom: 10px;
+}
+
+/* 하단 취소 버튼 스타일 */
+body > .add-btn {
+    display: block;
+    margin: 20px auto; /* 중앙 배치 및 상단 여백 */
+}
+
+
+
+.remaining-calories {
+    background: #3E5A91;
+    border-radius: 12px;
+    padding: 20px;
+    margin-top: 15px;
+    max-width: 350px;
+    margin-left: auto;
+    margin-right: auto;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+}
+
+.image-section {
+    margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.manual-section {
+    margin-top: 20px;
+    display: flex;
+    justify-content: center;
+}
+
+.manual-section select {
+    padding: 8px;
+    border-radius: 6px;
+    font-size: 14px;
+    width: 200px;
+    background: white;
+    color: #2E4979;
+    border: none;
+}
+

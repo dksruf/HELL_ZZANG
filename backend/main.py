@@ -1,5 +1,6 @@
 from fastapi import FastAPI, File, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
+import tensorflow as tf
 from tensorflow.keras.applications.inception_v3 import InceptionV3, preprocess_input, decode_predictions
 import tensorflow as tf
 import numpy as np
@@ -8,6 +9,34 @@ import pandas as pd
 import io
 from fastapi.responses import HTMLResponse
 import os
+
+
+
+# food_list.csv의 처음 101개 음식을 클래스 레이블로 사용
+CLASS_LABELS = [
+    "apple_pie", "baby_back_ribs", "baklava", "beef_carpaccio", "beef_tartare",
+    "beet_salad", "beignets", "bibimbap", "boiled egg", "bread_pudding",
+    "breakfast_burrito", "bruschetta", "caesar_salad", "cannoli", "caprese_salad",
+    "carrot_cake", "ceviche", "cheese_plate", "cheesecake", "chicken breast",
+    "chicken_curry", "chicken_quesadilla", "chicken_wings", "chocolate_cake",
+    "chocolate_mousse", "churros", "clam_chowder", "club_sandwich", "crab_cakes",
+    "creme_brulee", "croque_madame", "cup_cakes", "deviled_eggs", "donuts",
+    "dumplings", "edamame", "eggs_benedict", "escargots", "falafel",
+    "filet_mignon", "fish_and_chips", "foie_gras", "french_fries", "french_onion_soup",
+    "french_toast", "fried egg", "fried_calamari", "fried_rice", "frozen_yogurt",
+    "garlic_bread", "gnocchi", "greek_salad", "grilled_cheese_sandwich", "grilled_salmon",
+    "guacamole", "gyoza", "hamburger", "hot_and_sour_soup", "hot_dog",
+    "huevos_rancheros", "hummus", "ice_cream", "lasagna", "lobster_bisque",
+    "lobster_roll_sandwich", "macaroni_and_cheese", "macarons", "miso_soup",
+    "Multigrain rice", "mussels", "nachos", "omelette", "onion_rings",
+    "oysters", "pad_thai", "paella", "pancakes", "panna_cotta", "peking_duck",
+    "pho", "pizza", "pork", "pork_chop", "poutine", "prime_rib",
+    "pulled_pork_sandwich", "ramen", "ravioli", "red_velvet_cake", "risotto",
+    "samosa", "sashimi", "scallops", "seaweed_salad", "shrimp_and_grits",
+    "spaghetti_bolognese", "spaghetti_carbonara", "spring_rolls", "steak",
+    "strawberry_shortcake", "white rice"
+]  # 총 101개
+
 
 
 app = FastAPI()
@@ -62,32 +91,53 @@ app.add_middleware(
 food_df = pd.read_csv("food_info.csv")  # CSV 파일에 음식, 칼로리, 영양성분 정보가 있어야 함
 food_li = pd.read_csv("food_list.csv")
 # InceptionV3 모델 로드
-# model = InceptionV3(weights="imagenet")
+#model = InceptionV3(weights="imagenet") -> 원래코드
+
+#==================모델선언=========================
+
+pretrained_model = tf.keras.applications.MobileNetV2(
+    input_shape=(224, 224, 3),
+    include_top=False,
+    weights='imagenet',
+    pooling='avg'
+)
+pretrained_model.trainable = False
+inputs = pretrained_model.input
+
+x = tf.keras.layers.Dense(128, activation='relu')(pretrained_model.output)
+x = tf.keras.layers.Dense(128, activation='relu')(x)
+
+outputs = tf.keras.layers.Dense(101, activation='softmax')(x)
+#outputs = tf.keras.layers.Dense(107, activation='softmax')(x)
+
+model = tf.keras.Model(inputs, outputs)
+
+
+#모델 불러오기
+model.load_weights("cp.ckpt.weights.h5")
+
+#==================모델선언=========================
+
 
 # 음식 예측 함수
 def classify_food(image_bytes):
-    img = Image.open(io.BytesIO(image_bytes)).resize((224, 224))  # MobileNetV2 크기
-    img_array = np.array(img) / 255.0  # 정규화
+    img = Image.open(io.BytesIO(image_bytes)).resize((224, 224))
+    img_array = np.array(img) / 255.0
     img_array = np.expand_dims(img_array, axis=0)
 
     predictions = model.predict(img_array)
-    predicted_class = np.argmax(predictions)  # 가장 확률이 높은 클래스 선택
-    confidence = np.max(predictions)  # 해당 클래스의 확률 값
-    print("mmmmmmmmmmmmm ",predicted_class)
-    # food_df에서 food_name과 클래스 인덱스를 매핑하는 컬럼이 필요
-    # if "class_index" in food_df.columns:
-    #     food_name = food_df.loc[food_df["class_index"] == predicted_class, "food_name"].values
-    #     if len(food_name) > 0:
-    #         return food_name[0], confidence
-    
-    try:
-        food_name = food_li.iloc[predicted_class, 0]  # 첫 번째 컬럼(음식 이름) 선택
-        print("mmmmmmmmmmmmm ",food_name)
+    predicted_class = np.argmax(predictions) -2  # 가장 높은 확률의 클래스 인덱스
+    confidence = np.max(predictions)  # 해당 확률 값
 
+    # CLASS_LABELS에서 직접 음식 이름 가져오기
+    try:
+        food_name = CLASS_LABELS[predicted_class]
     except IndexError:
         food_name = "Unknown"
+        print(f"IndexError: Predicted class {predicted_class} out of range for {len(CLASS_LABELS)} classes")
 
-    return food_name, confidence # 매칭되는 음식이 없을 경우
+    print(f"Predicted class: {predicted_class}, Food: {food_name}, Confidence: {confidence}")
+    return food_name, confidence
 
 # CSV에서 음식 정보 조회
 def get_food_info(food_name: str):
@@ -142,6 +192,27 @@ async def predict(file: UploadFile = File(...)):
         }
     else:
         return {"food": food_name, "confidence": float(confidence), "message": "영양 정보 없음"}
+
+
+
+#음식 리스트에서 고르는 곳
+@app.get("/foods/")
+async def get_food_list():
+    # 음식 이름 목록 반환
+    return {"foods": food_df["food_name"].tolist()}
+
+@app.get("/food/{food_name}")
+async def get_food_info_endpoint(food_name: str):
+    food_data = get_food_info(food_name)
+    if food_data:
+        return {
+            "food": food_name,
+            **food_data  # calories, protein, carbs, fats 펼침
+        }
+    return {"message": f"{food_name}에 대한 정보가 없습니다."}
+
+
+
 
 if __name__ == "__main__":
     import uvicorn
