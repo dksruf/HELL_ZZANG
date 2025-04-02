@@ -44,7 +44,9 @@ app = FastAPI()
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))  # project 디렉토리 기준
 FRONTEND_DIR = os.path.join(BASE_DIR, "frontend")
 
-#모델 선언언
+'''
+==================================================================================
+#모델 선언
 pretrained_model = tf.keras.applications.MobileNetV2(
     input_shape=(224, 224, 3),
     include_top=False,
@@ -66,17 +68,8 @@ model = tf.keras.Model(inputs, outputs)
 #모델 불러오기
 model.load_weights("cp.ckpt.weights.h5")
 
-
-
-
-
-
-
-
-
-
-
-
+==================================================================================
+'''
 
 # CORS 설정
 app.add_middleware(
@@ -93,7 +86,7 @@ food_li = pd.read_csv("food_list.csv")
 # InceptionV3 모델 로드
 #model = InceptionV3(weights="imagenet") -> 원래코드
 
-#==================모델선언=========================
+#==================모델선언=========================#
 
 pretrained_model = tf.keras.applications.MobileNetV2(
     input_shape=(224, 224, 3),
@@ -116,7 +109,7 @@ model = tf.keras.Model(inputs, outputs)
 #모델 불러오기
 model.load_weights("cp.ckpt.weights.h5")
 
-#==================모델선언=========================
+#==================모델선언=========================#
 
 
 # 음식 예측 함수
