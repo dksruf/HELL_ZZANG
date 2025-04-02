@@ -126,7 +126,7 @@ def classify_food(image_bytes):
     img_array = np.expand_dims(img_array, axis=0)
 
     predictions = model.predict(img_array)
-    predicted_class = np.argmax(predictions) -2  # 가장 높은 확률의 클래스 인덱스
+    predicted_class = np.argmax(predictions)  # 가장 높은 확률의 클래스 인덱스
     confidence = np.max(predictions)  # 해당 확률 값
 
     # CLASS_LABELS에서 직접 음식 이름 가져오기
