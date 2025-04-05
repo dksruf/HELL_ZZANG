@@ -7,3 +7,7 @@ testing
 asdfgh
 
 브랜치 테스트
+
+perfect model 분기 만들었습니다.
+모델 다시 만지고, 이제 음식 예측하고 이름 출력하는데문 문제 없습니다.
+다시만든 백엔드 파일은 main_test.py 입니다
