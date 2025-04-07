@@ -1,13 +1,3 @@
-Branch 로 특정 기능 추가할때마다 버젼을 나눠주세요
-
-2025/03/28/최성규 합류
-
-testing
-
-asdfgh
-
-브랜치 테스트
-
-perfect model 분기 만들었습니다.
-모델 다시 만지고, 이제 음식 예측하고 이름 출력하는데문 문제 없습니다.
-다시만든 백엔드 파일은 main_test.py 입니다
+react-native install 하시고  내부 라이브러리들은
+npm install 또는 yarn install 명령어로 설치할 수 있습니다
+모드 project.json 파일에 구현되어있습니다. 
