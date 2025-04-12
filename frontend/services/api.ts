@@ -2,7 +2,7 @@ import axios from 'axios';
 
 // API 기본 URL 설정 - 실제 디바이스에서 테스트할 때는 컴퓨터의 IP 주소로 변경
 // 예: 'http://192.168.1.100:8000'
-const BASE_URL = 'http://192.168.0.100:8000';
+const BASE_URL = 'https://7f95-121-187-226-243.ngrok-free.app';
 
 // 개발 환경에서는 localhost 사용 (웹 에뮬레이터에서 테스트할 때)
 // const BASE_URL = 'http://localhost:8000';

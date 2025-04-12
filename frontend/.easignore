@@ -1,0 +1,18 @@
+# Ignore everything
+*
+
+# But not these files...
+!.expo
+!app.json
+!package.json
+!tsconfig.json
+!babel.config.js
+!metro.config.js
+!app/
+!assets/
+!components/
+!constants/
+!hooks/
+!models/
+!services/
+!node_modules/ 

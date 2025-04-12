@@ -13,8 +13,10 @@
       "infoPlist": {
         "NSCameraUsageDescription": "음식 사진을 촬영하기 위해 카메라 접근 권한이 필요합니다.",
         "NSPhotoLibraryUsageDescription": "음식 사진을 선택하기 위해 사진 라이브러리 접근 권한이 필요합니다.",
-        "NSMicrophoneUsageDescription": "카메라 사용 시 마이크 접근 권한이 필요합니다."
-      }
+        "NSMicrophoneUsageDescription": "카메라 사용 시 마이크 접근 권한이 필요합니다.",
+        "ITSAppUsesNonExemptEncryption": false
+      },
+      "bundleIdentifier": "com.dksruf.HELLZANG"
     },
     "android": {
       "adaptiveIcon": {
@@ -22,11 +24,12 @@
         "backgroundColor": "#ffffff"
       },
       "permissions": [
-        "CAMERA",
-        "READ_EXTERNAL_STORAGE",
-        "WRITE_EXTERNAL_STORAGE",
-        "RECORD_AUDIO"
-      ]
+        "android.permission.CAMERA",
+        "android.permission.READ_EXTERNAL_STORAGE",
+        "android.permission.WRITE_EXTERNAL_STORAGE",
+        "android.permission.RECORD_AUDIO"
+      ],
+      "package": "com.dksruf.HELLZANG"
     },
     "web": {
       "bundler": "metro",
@@ -64,6 +67,14 @@
     ],
     "experiments": {
       "typedRoutes": true
+    },
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "5ba14889-10ad-4311-9204-8a0aadf86516"
+      }
     }
   }
 }
