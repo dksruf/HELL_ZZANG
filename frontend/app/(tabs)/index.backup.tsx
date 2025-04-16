@@ -941,39 +941,33 @@ export default function HomeScreen() {
         onRequestClose={() => setSavedFoodsVisible(false)}
       >
         <View style={styles.modalOverlay}>
-          <View style={[styles.modalContent, styles.savedFoodsModal]}>
+          <View style={styles.modalContent}>
             <View style={styles.modalHeader}>
               <ThemedText style={styles.modalTitle}>저장된 음식</ThemedText>
-              <TouchableOpacity 
-                style={styles.closeButtonContainer}
-                onPress={() => setSavedFoodsVisible(false)}
-              >
+              <TouchableOpacity onPress={() => setSavedFoodsVisible(false)}>
                 <ThemedText style={styles.closeButton}>✕</ThemedText>
               </TouchableOpacity>
             </View>
             
-            <ScrollView style={styles.savedFoodsList} contentContainerStyle={styles.savedFoodsListContent}>
+            <ScrollView style={styles.savedFoodsList}>
               {tracker.getSavedFoods().length > 0 ? (
                 tracker.getSavedFoods().map((meal, index) => (
-                  <View key={index} style={styles.savedFoodItemContainer}>
+                  <TouchableOpacity 
+                    key={index} 
+                    style={styles.savedFoodItem}
+                    onPress={() => {
+                      tracker.addMeal(meal);
+                      setSavedFoodsVisible(false);
+                    }}
+                  >
                     <MealCard
                       meal={meal}
                       onDelete={() => handleDeleteSavedFood(index)}
-                      onEdit={() => {
-                        // When the meal card is clicked, add the meal
-                        tracker.addMeal(meal);
-                        setSavedFoodsVisible(false);
-                        setRefreshKey(prev => prev + 1); // Force refresh to show the added meal
-                      }}
                     />
-                  </View>
+                  </TouchableOpacity>
                 ))
               ) : (
-                <View style={styles.emptyListContainer}>
-                  <ThemedText style={styles.emptyListIcon}>🍽️</ThemedText>
-                  <ThemedText style={styles.emptyListText}>저장된 음식이 없습니다.</ThemedText>
-                  <ThemedText style={styles.emptyListSubText}>식사를 추가하면 자동으로 저장됩니다.</ThemedText>
-                </View>
+                <ThemedText style={styles.emptyListText}>저장된 음식이 없습니다.</ThemedText>
               )}
             </ScrollView>
           </View>
@@ -1473,41 +1467,27 @@ const styles = StyleSheet.create({
 
   // ============= 저장된 음식 목록 스타일 =============
   savedFoodsList: {
-    flexGrow: 1,
+    maxHeight: '110%',
   },
-  savedFoodsListContent: {
-    paddingVertical: 10,
-  },
-  savedFoodItemContainer: {
-    marginBottom: 10,
-    borderRadius: 15,
-    overflow: 'hidden',
+  savedFoodItem: {
     backgroundColor: '#F8F9FA',
-    elevation: 2,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.2,
-    shadowRadius: 1.5,
-  },
-  emptyListContainer: {
-    padding: 30,
+    padding: 0,
+    borderRadius: 12,
+    marginBottom: 10,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
     alignItems: 'center',
-    justifyContent: 'center',
-  },
-  emptyListIcon: {
-    fontSize: 36,
-    marginBottom: 20,
+    width: '100%',
   },
   emptyListText: {
-    fontSize: 18,
-    fontWeight: '600',
-    color: '#666',
-    marginBottom: 10,
-  },
-  emptyListSubText: {
-    fontSize: 14,
-    color: '#999',
     textAlign: 'center',
+    color: '#666',
+    marginTop: 20,
+  },
+  savedFoodRightSection: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
   },
 
   // ============= 영양소 입력 스타일 =============
@@ -1543,18 +1523,26 @@ const styles = StyleSheet.create({
   },
 
   // ============= 추가 옵션 모달 스타일 =============
+  addOptionsOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    justifyContent: 'flex-end',
+    alignItems: 'center',
+  },
   addOptionsContainer: {
-    position: 'absolute',
-    bottom: 80,
+    position: Platform.OS === 'web' ? 'relative' : 'absolute',
+    bottom: Platform.OS === 'web' ? 20 : 80,
     alignSelf: 'center',
     backgroundColor: 'white',
     borderRadius: 20,
-    width: '90%',
+    width: Platform.OS === 'web' ? '80%' : '90%',
+    maxWidth: Platform.OS === 'web' ? 400 : '90%',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.25,
     shadowRadius: 4,
     elevation: 5,
+    marginBottom: Platform.OS === 'web' ? 30 : 0,
   },
   addOptionsGrid: {
     flexDirection: 'column',
@@ -1775,12 +1763,6 @@ const styles = StyleSheet.create({
     flexGrow: 1,
     paddingBottom: 20,
   },
-  addOptionsOverlay: {
-    flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    justifyContent: 'flex-end',
-    alignItems: 'center',
-  },
 
   // 로딩 오버레이 스타일
   loadingOverlay: {
@@ -1798,13 +1780,5 @@ const styles = StyleSheet.create({
     marginTop: 10,
     fontSize: 16,
     color: '#FFF',
-  },
-  savedFoodsModal: {
-    width: '95%',
-    maxHeight: '80%',
-    paddingHorizontal: 15,
-    paddingTop: 0,
-    paddingBottom: 20,
-    borderRadius: 20,
   },
 });
