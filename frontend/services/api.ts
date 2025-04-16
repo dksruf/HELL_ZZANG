@@ -1,8 +1,10 @@
 import axios from 'axios';
+import { Platform } from 'react-native';
 
 // API 기본 URL 설정 - 실제 디바이스에서 테스트할 때는 컴퓨터의 IP 주소로 변경
 // 예: 'http://192.168.1.100:8000'
-const BASE_URL = 'https://7f95-121-187-226-243.ngrok-free.app';
+// const BASE_URL = 'https://large-bold-lioness.ngrok-free.app';
+const BASE_URL = 'https://6305-210-110-128-85.ngrok-free.app';
 
 // 개발 환경에서는 localhost 사용 (웹 에뮬레이터에서 테스트할 때)
 // const BASE_URL = 'http://localhost:8000';
@@ -56,30 +58,37 @@ export const apiService = {
   // 이미지 분석 엔드포인트
   analyzeFoodImage: async (imageUri: string) => {
     try {
-      console.log('이미지 URI:', imageUri); // 디버깅을 위한 로그 추가
+      console.log('이미지 URI:', imageUri); // 디버깅을 위한 로그
       
-      // 이미지를 Blob으로 변환
-      const response = await fetch(imageUri);
-      const blob = await response.blob();
+      let formData = new FormData();
       
-      console.log('Blob 크기:', blob.size); // 디버깅을 위한 로그 추가
+      if (Platform.OS === 'web') {
+        // Web browser handling
+        // For web, we need to fetch the image and convert it to a blob
+        const response = await fetch(imageUri);
+        const blob = await response.blob();
+        formData.append('file', blob, 'food_image.jpg');
+      } else {
+        // Mobile (iOS/Android) handling
+        formData.append('file', {
+          uri: Platform.OS === 'android' ? imageUri : imageUri.replace('file://', ''),
+          type: 'image/jpeg',
+          name: 'food_image.jpg'
+        } as any);
+      }
       
-      // FormData 구성
-      const formData = new FormData();
-      formData.append('file', {
-        uri: imageUri,
-        type: 'image/jpeg', // 또는 실제 이미지 타입에 맞게 설정
-        name: 'food_image.jpg'
-      } as any);
-      
-      console.log('FormData:', formData); // 디버깅을 위한 로그 추가
+      console.log('FormData created:', formData); // 디버깅을 위한 로그
       
       // 서버로 요청 전송
       const serverResponse = await api.post('/predict/', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
+          // Add CORS headers for web
+          ...(Platform.OS === 'web' ? {
+            'Access-Control-Allow-Origin': '*',
+          } : {})
         },
-        transformRequest: (data, headers) => {
+        transformRequest: (data) => {
           return data; // FormData를 변환하지 않고 그대로 전송
         },
       });
@@ -87,6 +96,11 @@ export const apiService = {
       return serverResponse.data;
     } catch (error) {
       console.error('이미지 분석 오류:', error);
+      // Add more detailed error logging
+      if (axios.isAxiosError(error)) {
+        console.error('Axios Error Response:', error.response?.data);
+        console.error('Axios Error Status:', error.response?.status);
+      }
       throw error;
     }
   },

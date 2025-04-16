@@ -442,6 +442,8 @@ export default function HomeScreen() {
     fats: 0,
     healthScore: 0,
   });
+  const [editingExistingMeal, setEditingExistingMeal] = useState(false);
+  const [editingMealIndex, setEditingMealIndex] = useState(-1);
 
   const params = useLocalSearchParams<{ imageUri?: string }>();
 
@@ -548,7 +550,26 @@ export default function HomeScreen() {
   const handleSaveFixResults = () => {
     setAnalyzedFoodData(editingFood);
     setFixResultsVisible(false);
-    setAnalysisModalVisible(true);
+    
+    // If we're editing an existing meal, update it
+    if (editingExistingMeal) {
+      // Update the meal in the tracker
+      // You'll need to implement this functionality in your NutritionTracker class
+      tracker.updateMeal(editingMealIndex, Meal.fromFormData(
+        editingFood.name,
+        editingFood.calories,
+        editingFood.protein,
+        editingFood.carbs,
+        editingFood.fats,
+        editingFood.quantity * 100, // Convert quantity back to grams
+        currentImageUri
+      ));
+      setEditingExistingMeal(false);
+      setEditingMealIndex(-1);
+    } else {
+      // Show the analysis modal for new meals
+      setAnalysisModalVisible(true);
+    }
   };
 
   // FastAPI 서버 테스트 함수
@@ -629,7 +650,11 @@ export default function HomeScreen() {
         visible={fixResultsVisible}
         transparent={true}
         animationType="slide"
-        onRequestClose={() => setFixResultsVisible(false)}
+        onRequestClose={() => {
+          setFixResultsVisible(false);
+          setEditingExistingMeal(false);
+          setEditingMealIndex(-1);
+        }}
       >
         <View style={styles.modalOverlay}>
           <View style={[styles.modalContent, styles.describeFoodModal]}>
@@ -637,7 +662,11 @@ export default function HomeScreen() {
               <ThemedText style={styles.modalTitle}>분석 결과 수정</ThemedText>
               <TouchableOpacity 
                 style={styles.closeButtonContainer}
-                onPress={() => setFixResultsVisible(false)}
+                onPress={() => {
+                  setFixResultsVisible(false);
+                  setEditingExistingMeal(false);
+                  setEditingMealIndex(-1);
+                }}
               >
                 <ThemedText style={styles.closeButton}>✕</ThemedText>
               </TouchableOpacity>
@@ -719,7 +748,11 @@ export default function HomeScreen() {
             <View style={styles.modalFooter}>
               <TouchableOpacity 
                 style={[styles.footerButton, styles.cancelButton]} 
-                onPress={() => setFixResultsVisible(false)}
+                onPress={() => {
+                  setFixResultsVisible(false);
+                  setEditingExistingMeal(false);
+                  setEditingMealIndex(-1);
+                }}
               >
                 <ThemedText style={styles.buttonText}>취소</ThemedText>
               </TouchableOpacity>
@@ -727,7 +760,9 @@ export default function HomeScreen() {
                 style={[styles.footerButton, styles.saveButton]}
                 onPress={handleSaveFixResults}
               >
-                <ThemedText style={styles.buttonText}>저장</ThemedText>
+                <ThemedText style={styles.buttonText}>
+                  {editingExistingMeal ? '수정' : '저장'}
+                </ThemedText>
               </TouchableOpacity>
             </View>
           </View>
@@ -777,6 +812,21 @@ export default function HomeScreen() {
               key={index}
               meal={meal}
               onDelete={() => handleDeleteMeal(index)}
+              onEdit={() => {
+                setEditingExistingMeal(true);
+                setEditingMealIndex(index);
+                setAnalyzedFoodData({
+                  name: meal.name,
+                  quantity: meal.grams / 100,
+                  calories: meal.calories,
+                  protein: meal.protein,
+                  carbs: meal.carbs,
+                  fats: meal.fat,
+                  healthScore: 0,
+                });
+                setCurrentImageUri(meal.imageUri);
+                setFixResultsVisible(true);
+              }}
             />
           ))}
         </View>

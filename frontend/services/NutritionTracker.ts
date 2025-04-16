@@ -80,4 +80,29 @@ export class NutritionTracker {
     this.macros[1].subtractAmount(meal.calculateActualCarbs());
     this.macros[2].subtractAmount(meal.calculateActualFat());
   }
+
+  updateMeal(index: number, updatedMeal: Meal) {
+    if (index >= 0 && index < this.recentMeals.length) {
+      // 기존 식사의 영양소를 빼기
+      const oldMeal = this.recentMeals[index];
+      this.subtractMacros(oldMeal);
+      
+      // 새로운 식사로 업데이트
+      this.recentMeals[index] = updatedMeal;
+      
+      // 새로운 식사의 영양소를 더하기
+      this.updateMacros(updatedMeal);
+    }
+  }
+
+  // 모든 영양소 총량을 다시 계산
+  private recalculateTotals() {
+    // 모든 매크로를 0으로 초기화
+    this.macros.forEach(macro => macro.resetCurrent());
+    
+    // 모든 식사에 대해 영양소를 다시 계산
+    this.recentMeals.forEach(meal => {
+      this.updateMacros(meal);
+    });
+  }
 } 

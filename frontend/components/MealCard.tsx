@@ -5,59 +5,50 @@ import { Meal } from '../models/Meal';
 
 interface MealCardProps {
   meal: Meal;
-  onDelete?: () => void;
+  onDelete: () => void;
+  onEdit?: () => void;
 }
 
-export const MealCard: React.FC<MealCardProps> = ({ meal, onDelete }) => {
-  const handleDelete = () => {
-    if (onDelete) {
-      onDelete();
-    }
-  };
-
+export const MealCard: React.FC<MealCardProps> = ({ meal, onDelete, onEdit }) => {
   return (
-    <View style={styles.mealCard}>
+    <TouchableOpacity 
+      style={styles.mealCard}
+      onPress={onEdit}
+    >
       <View style={styles.mealInfo}>
-        <View style={styles.mealImageContainer}>
-          {meal.imageUri ? (
-            <Image 
-              source={{ uri: meal.imageUri }} 
-              style={styles.mealImage}
-              resizeMode="cover"
-            />
-          ) : (
-            <View style={styles.mealImagePlaceholder} />
-          )}
+        {meal.imageUri && (
+          <Image
+            source={{ uri: meal.imageUri }}
+            style={styles.mealImage}
+          />
+        )}
+        <View>
           <View style={styles.mealNameContainer}>
-            <View style={styles.nameAndCalories}>
-              <View style={styles.nameAndGrams}>
-                <ThemedText style={styles.mealName} numberOfLines={2}>{meal.name}</ThemedText>
-                <ThemedText style={styles.mealGrams}>({meal.grams}g)</ThemedText>
-              </View>
-              <View style={styles.calorieTimeContainer}>
-                <ThemedText style={styles.mealCalories}>{meal.calculateActualCalories()} kcal</ThemedText>
-                <ThemedText style={styles.mealTime}>{meal.time}</ThemedText>
-              </View>
-            </View>
+            <ThemedText style={styles.mealName}>{meal.name}</ThemedText>
+            <ThemedText style={styles.mealGrams}>{meal.grams}g</ThemedText>
           </View>
-        </View>
-        <View style={styles.mealDetails}>
           <View style={styles.macroTags}>
-            <ThemedText style={styles.macroTag}>🥩 {meal.calculateActualProtein().toFixed(1)}g</ThemedText>
-            <ThemedText style={styles.macroTag}>🌾 {meal.calculateActualCarbs().toFixed(1)}g</ThemedText>
-            <ThemedText style={styles.macroTag}>🥑 {meal.calculateActualFat().toFixed(1)}g</ThemedText>
+            <ThemedText style={styles.macroTag}>🥩 {meal.protein}g</ThemedText>
+            <ThemedText style={styles.macroTag}>🌾 {meal.carbs}g</ThemedText>
+            <ThemedText style={styles.macroTag}>🥑 {meal.fat}g</ThemedText>
           </View>
         </View>
       </View>
-      {onDelete && (
-        <TouchableOpacity 
-          style={styles.deleteButton}
-          onPress={handleDelete}
-        >
-          <ThemedText style={styles.deleteButtonText}>✕</ThemedText>
-        </TouchableOpacity>
-      )}
-    </View>
+      <View style={styles.mealRightSection}>
+        <View style={styles.calorieDeleteContainer}>
+          <ThemedText style={styles.mealCalories}>{meal.calories}kcal</ThemedText>
+          <TouchableOpacity 
+            style={styles.deleteButton}
+            onPress={(e) => {
+              e.stopPropagation();
+              onDelete();
+            }}
+          >
+            <ThemedText style={styles.deleteButtonText}>✕</ThemedText>
+          </TouchableOpacity>
+        </View>
+      </View>
+    </TouchableOpacity>
   );
 };
 
@@ -158,5 +149,14 @@ const styles = StyleSheet.create({
   deleteButtonText: {
     fontSize: 16,
     color: '#666',
+  },
+  mealRightSection: {
+    flexDirection: 'column',
+    alignItems: 'flex-end',
+  },
+  calorieDeleteContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
   },
 }); 

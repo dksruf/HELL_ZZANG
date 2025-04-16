@@ -18,4 +18,8 @@ export class Macro {
   subtractAmount(amount: number): void {
     this.current = Math.max(0, this.current - amount);
   }
+
+  resetCurrent(): void {
+    this.current = 0;
+  }
 } 
