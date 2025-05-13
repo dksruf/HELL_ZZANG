@@ -102,9 +102,6 @@ const styles = StyleSheet.create({
     width: '100%',
     gap: 8,
   },
-  calorieTimeContainer: {
-    alignItems: 'flex-end',
-  },
   nameAndGrams: {
     flexDirection: 'column',
     gap: 2,
@@ -118,11 +115,6 @@ const styles = StyleSheet.create({
   mealGrams: {
     fontSize: 12,
     color: '#666',
-  },
-  mealTime: {
-    fontSize: 12,
-    color: '#666',
-    marginTop: 4,
   },
   macroTags: {
     flexDirection: 'row',

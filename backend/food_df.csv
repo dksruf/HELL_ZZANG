@@ -1,8 +1,10 @@
 food_name,calories,protein,carbs,fats
-boiled egg,100,100,100,100
-chicken breast,200,200,200,200
-fried egg,300,300,300,300
-fried rice,400,400,400,400
+almond,100,100,100,100
+boiled egg,200,200,200,200
+chicken breast,300,300,300,300
+fried egg,400,400,400,400
 multigrain rice,500,500,500,500
 pork,600,600,600,600
-white rice,700,700,700,700
+sweetpotato,700,700,700,700
+tomato,800,800,800,800
+white rice,900,900,900,900

@@ -148,7 +148,7 @@ if __name__ == "__main__":
     닭가슴살 = "../images/chicken_breast/다운로드 (6).jpg"
     계란후라이 = "../images/fried egg/다운로드 (12).jpg"
     볶음밥 = "../images/fried_rice/49075.jpg"
-    잡곡밥 = "../images/Multigrain rice/16461_20712_1243.jpg"
+    잡곡밥 = "../images/multigrain rice/16461_20712_1243.jpg"
     돼지고기 = "../images/pork/images - 2025-03-28T111141.519.jpg"
     백미밥 = "../images/white rice/다운로드 (4).jpg"
     
@@ -298,4 +298,4 @@ async def test_endpoint():
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+    uvicorn.run(app, host="localhost", port=8081)

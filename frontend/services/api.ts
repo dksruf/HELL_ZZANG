@@ -4,7 +4,7 @@ import { Platform } from 'react-native';
 // API 기본 URL 설정 - 실제 디바이스에서 테스트할 때는 컴퓨터의 IP 주소로 변경
 // 예: 'http://192.168.1.100:8000'
 // const BASE_URL = 'https://large-bold-lioness.ngrok-free.app';
-const BASE_URL = 'https://satyr-meet-newly.ngrok-free.app';
+const BASE_URL = 'http://127.0.0.1:8000';
 
 // 개발 환경에서는 localhost 사용 (웹 에뮬레이터에서 테스트할 때)
 // const BASE_URL = 'http://localhost:8000';
