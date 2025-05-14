@@ -353,6 +353,7 @@ export const AddMealModal: React.FC<AddMealModalProps> = ({
                   <View style={globalStyles.mealNameContainer}>
                     <ThemedText style={globalStyles.mealName}>{meal.name}</ThemedText>
                     <ThemedText style={globalStyles.mealGrams}>{meal.grams}g</ThemedText>
+                    <ThemedText style={globalStyles.mealCalories}>{meal.calories}kcal</ThemedText>
                   </View>
                   <View style={globalStyles.macroTags}>
                     <ThemedText style={globalStyles.macroTag}>🥩 {meal.protein}g</ThemedText>
@@ -363,7 +364,6 @@ export const AddMealModal: React.FC<AddMealModalProps> = ({
               </View>
               <View style={globalStyles.mealRightSection}>
                 <View style={globalStyles.calorieDeleteContainer}>
-                  <ThemedText style={globalStyles.mealCalories}>{meal.calories}kcal</ThemedText>
                   <TouchableOpacity 
                     style={globalStyles.deleteButton}
                     onPress={(e) => {

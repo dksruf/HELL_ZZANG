@@ -7,15 +7,15 @@ export const styles = StyleSheet.create({
     backgroundColor: '#F8F9FA',
   },
   header: {
-    padding: 20,
-    paddingTop: 60,
-    paddingBottom: 20,
+    padding: 5,
+    paddingTop: 5,
+    paddingBottom: 8,
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
   },
   appTitle: {
-    fontSize: 24,
+    fontSize: 20,
     fontWeight: 'bold',
     color: '#000',
   },
@@ -151,12 +151,14 @@ export const styles = StyleSheet.create({
     marginBottom: 10,
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'center',
+    alignItems: 'flex-start',
+    width: '100%',
   },
   mealInfo: {
     flexDirection: 'row',
-    alignItems: 'center',
+    alignItems: 'flex-start',
     gap: 15,
+    flex: 1,
   },
   mealImagePlaceholder: {
     width: 60,
@@ -165,14 +167,14 @@ export const styles = StyleSheet.create({
     borderRadius: 10,
   },
   mealNameContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: 'column',
+    alignItems: 'flex-start',
     gap: 4,
+    flex: 1,
   },
   mealName: {
-    fontSize: 20,
-    fontWeight: '600',
-    flex: 1,
+    fontSize: 16,
+    fontWeight: '500',
     color: '#000',
   },
   mealGrams: {
@@ -188,6 +190,7 @@ export const styles = StyleSheet.create({
   macroTags: {
     flexDirection: 'row',
     gap: 8,
+    marginTop: 8,
   },
   macroTag: {
     fontSize: 12,
@@ -196,6 +199,7 @@ export const styles = StyleSheet.create({
   mealRightSection: {
     alignItems: 'flex-end',
     justifyContent: 'flex-start',
+    marginLeft: 10,
   },
   calorieDeleteContainer: {
     flexDirection: 'row',
@@ -203,7 +207,7 @@ export const styles = StyleSheet.create({
     gap: 8,
   },
   mealCalories: {
-    fontSize: 16,
+    fontSize: 14,
     fontWeight: '500',
     color: '#000',
   },
@@ -212,6 +216,8 @@ export const styles = StyleSheet.create({
     height: 24,
     justifyContent: 'center',
     alignItems: 'center',
+    backgroundColor: '#f5f5f5',
+    borderRadius: 12,
   },
   deleteButtonText: {
     fontSize: 16,

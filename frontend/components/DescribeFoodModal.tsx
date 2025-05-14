@@ -76,116 +76,95 @@ export const DescribeFoodModal: React.FC<DescribeFoodModalProps> = ({
       onRequestClose={onClose}
     >
       <View style={styles.modalOverlay}>
-        <View style={styles.modalContent}>
-          <View style={styles.modalHeader}>
-            <ThemedText style={styles.modalTitle}>음식 추가</ThemedText>
-            <TouchableOpacity 
-              style={styles.closeButtonContainer}
-              onPress={onClose}
-            >
-              <ThemedText style={styles.closeButton}>✕</ThemedText>
-            </TouchableOpacity>
-          </View>
-          
-          <ScrollView style={styles.describeFoodContent}>
+        <View style={[styles.modalContent, {
+          maxHeight: '90%',
+          width: '90%',
+        }]}>
+          <ScrollView style={{ flex: 1 }}>
+            <View style={styles.modalHeader}>
+              <ThemedText style={styles.modalTitle}>음식 정보 수정</ThemedText>
+              <TouchableOpacity 
+                style={styles.closeButtonContainer}
+                onPress={onClose}
+              >
+                <ThemedText style={styles.closeButton}>✕</ThemedText>
+              </TouchableOpacity>
+            </View>
+            
             <View style={styles.inputContainer}>
               <ThemedText style={styles.inputLabel}>음식 이름</ThemedText>
               <TextInput
-                style={styles.largeInput}
-                placeholder="예: 치킨 샐러드"
-                placeholderTextColor="#999"
+                style={styles.input}
                 value={foodName}
                 onChangeText={setFoodName}
+                placeholder="음식 이름을 입력하세요"
               />
-            </View>
-            
-            <View style={styles.inputContainer}>
-              <ThemedText style={styles.inputLabel}>100g 당 칼로리 (kcal)</ThemedText>
-              <TextInput
-                style={styles.largeInput}
-                placeholder="예: 350"
-                keyboardType="numeric"
-                placeholderTextColor="#999"
-                value={foodCalories}
-                onChangeText={setFoodCalories}
-              />
-            </View>
-            
-            <View style={styles.inputContainer}>
-              <ThemedText style={styles.inputLabel}>영양소 정보 (100g 당)</ThemedText>
-              <View style={styles.macroInputWrapper}>
-                <View style={styles.macroInputItem}>
-                  <ThemedText style={styles.macroInputLabel}>
-                    <ThemedText style={styles.macroIcon}>🥩 </ThemedText>
-                    단백질 (g)
-                  </ThemedText>
-                  <TextInput
-                    style={styles.largeInput}
-                    placeholder="25"
-                    keyboardType="numeric"
-                    placeholderTextColor="#999"
-                    value={foodProtein}
-                    onChangeText={setFoodProtein}
-                  />
-                </View>
-                <View style={styles.macroInputItem}>
-                  <ThemedText style={styles.macroInputLabel}>
-                    <ThemedText style={styles.macroIcon}>🌾 </ThemedText>
-                    탄수화물 (g)
-                  </ThemedText>
-                  <TextInput
-                    style={styles.largeInput}
-                    placeholder="30"
-                    keyboardType="numeric"
-                    placeholderTextColor="#999"
-                    value={foodCarbs}
-                    onChangeText={setFoodCarbs}
-                  />
-                </View>
-                <View style={styles.macroInputItem}>
-                  <ThemedText style={styles.macroInputLabel}>
-                    <ThemedText style={styles.macroIcon}>🥑 </ThemedText>
-                    지방 (g)
-                  </ThemedText>
-                  <TextInput
-                    style={styles.largeInput}
-                    placeholder="10"
-                    keyboardType="numeric"
-                    placeholderTextColor="#999"
-                    value={foodFat}
-                    onChangeText={setFoodFat}
-                  />
-                </View>
-              </View>
             </View>
 
             <View style={styles.inputContainer}>
-              <ThemedText style={styles.inputLabel}>1 회분(g)</ThemedText>
+              <ThemedText style={styles.inputLabel}>칼로리 (kcal)</ThemedText>
               <TextInput
-                style={styles.largeInput}
-                placeholder="예: 150"
+                style={styles.input}
+                value={foodCalories}
+                onChangeText={setFoodCalories}
                 keyboardType="numeric"
-                placeholderTextColor="#999"
-                value={foodGrams}
-                onChangeText={setFoodGrams}
+                placeholder="칼로리를 입력하세요"
               />
             </View>
+
+            <View style={styles.inputContainer}>
+              <ThemedText style={styles.inputLabel}>단백질 (g)</ThemedText>
+              <TextInput
+                style={styles.input}
+                value={foodProtein}
+                onChangeText={setFoodProtein}
+                keyboardType="numeric"
+                placeholder="단백질을 입력하세요"
+              />
+            </View>
+
+            <View style={styles.inputContainer}>
+              <ThemedText style={styles.inputLabel}>탄수화물 (g)</ThemedText>
+              <TextInput
+                style={styles.input}
+                value={foodCarbs}
+                onChangeText={setFoodCarbs}
+                keyboardType="numeric"
+                placeholder="탄수화물을 입력하세요"
+              />
+            </View>
+
+            <View style={styles.inputContainer}>
+              <ThemedText style={styles.inputLabel}>지방 (g)</ThemedText>
+              <TextInput
+                style={styles.input}
+                value={foodFat}
+                onChangeText={setFoodFat}
+                keyboardType="numeric"
+                placeholder="지방을 입력하세요"
+              />
+            </View>
+
+            <View style={styles.inputContainer}>
+              <ThemedText style={styles.inputLabel}>그램 수 (g)</ThemedText>
+              <TextInput
+                style={styles.input}
+                value={foodGrams}
+                onChangeText={setFoodGrams}
+                keyboardType="numeric"
+                placeholder="그램 수를 입력하세요"
+              />
+            </View>
+
+            <View style={styles.buttonContainer}>
+              <TouchableOpacity style={[styles.button, styles.cancelButton]} onPress={onClose}>
+                <ThemedText style={styles.buttonText}>취소</ThemedText>
+              </TouchableOpacity>
+              <TouchableOpacity style={[styles.button, styles.saveButton]} onPress={onSave}>
+                <ThemedText style={styles.buttonText}>저장</ThemedText>
+              </TouchableOpacity>
+            </View>
           </ScrollView>
-          
-          <View style={styles.modalFooter}>
-            <TouchableOpacity 
-              style={styles.footerButton} 
-              onPress={onClose}
-            >
-              <ThemedText style={styles.buttonText}>취소</ThemedText>
-            </TouchableOpacity>
-            <TouchableOpacity 
-              style={styles.footerButton}
-              onPress={onSave}
-            >
-              <ThemedText style={styles.buttonText}>저장</ThemedText>
-            </TouchableOpacity>
-          </View>
         </View>
       </View>
     </Modal>

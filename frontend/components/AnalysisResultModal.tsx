@@ -144,69 +144,86 @@ export const AnalysisResultModal: React.FC<AnalysisResultModalProps> = ({
         onRequestClose={onClose}
       >
         <View style={globalStyles.modalOverlay}>
-          <View style={[globalStyles.modalContent, { padding: 0, borderRadius: 20, overflow: 'hidden' }]}> 
-            {imageUri && (
-              <Image source={{ uri: imageUri }} style={{ width: '100%', height: 220, borderTopLeftRadius: 20, borderTopRightRadius: 20 }} resizeMode="cover" />
-            )}
-            <View style={{ padding: 24 }}>
-              <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
-                <View>
-                  <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#222' }}>{koreanName}</Text>
-                  <Text style={{ fontSize: 16, color: '#666', marginTop: 4 }}>{name}</Text>
+          <View style={[globalStyles.modalContent, { 
+            padding: 0, 
+            borderRadius: 20, 
+            overflow: 'hidden',
+            maxHeight: '90%', // 화면 높이의 90%로 제한
+            width: '90%', // 화면 너비의 90%로 제한
+          }]}> 
+            <ScrollView style={{ flex: 1 }}>
+              {imageUri && (
+                <Image 
+                  source={{ uri: imageUri }} 
+                  style={{ 
+                    width: '100%', 
+                    height: 220, 
+                    borderTopLeftRadius: 20, 
+                    borderTopRightRadius: 20 
+                  }} 
+                  resizeMode="cover" 
+                />
+              )}
+              <View style={{ padding: 24 }}>
+                <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
+                  <View>
+                    <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#222' }}>{koreanName}</Text>
+                    <Text style={{ fontSize: 16, color: '#666', marginTop: 4 }}>{name}</Text>
+                  </View>
+                  <View style={{ flexDirection: 'row', alignItems: 'center', backgroundColor: '#fafafa', borderRadius: 16, paddingHorizontal: 8, paddingVertical: 4 }}>
+                    <TouchableOpacity onPress={decrement} style={{ padding: 8 }}>
+                      <Text style={{ fontSize: 20, color: '#666' }}>-</Text>
+                    </TouchableOpacity>
+                    <TextInput
+                      style={{ fontSize: 16, marginHorizontal: 12, minWidth: 48, textAlign: 'center', paddingVertical: 0, paddingHorizontal: 0 }}
+                      value={grams.toString()}
+                      onChangeText={text => setGrams(Number(text) || 0)}
+                      keyboardType="numeric"
+                      returnKeyType="done"
+                    />
+                    <Text style={{ fontSize: 16, color: '#666' }}>g</Text>
+                    <TouchableOpacity onPress={increment} style={{ padding: 8 }}>
+                      <Text style={{ fontSize: 20, color: '#666' }}>+</Text>
+                    </TouchableOpacity>
+                  </View>
                 </View>
-                <View style={{ flexDirection: 'row', alignItems: 'center', backgroundColor: '#fafafa', borderRadius: 16, paddingHorizontal: 8, paddingVertical: 4 }}>
-                  <TouchableOpacity onPress={decrement} style={{ padding: 8 }}>
-                    <Text style={{ fontSize: 20, color: '#666' }}>-</Text>
+                <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 18 }}>
+                  <Text style={{ fontSize: 20, marginRight: 6 }}>🔥</Text>
+                  <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#222' }}>{calories}</Text>
+                </View>
+                <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 24 }}>
+                  <View style={{ alignItems: 'center', flex: 1 }}>
+                    <Text style={{ fontSize: 28, marginBottom: 2 }}>🥩</Text>
+                    <Text style={{ color: '#888', fontSize: 14 }}>단백질</Text>
+                    <Text style={{ fontWeight: 'bold', fontSize: 16 }}>{protein}g</Text>
+                  </View>
+                  <View style={{ alignItems: 'center', flex: 1 }}>
+                    <Text style={{ fontSize: 28, marginBottom: 2 }}>🌾</Text>
+                    <Text style={{ color: '#888', fontSize: 14 }}>탄수화물</Text>
+                    <Text style={{ fontWeight: 'bold', fontSize: 16 }}>{carbs}g</Text>
+                  </View>
+                  <View style={{ alignItems: 'center', flex: 1 }}>
+                    <Text style={{ fontSize: 28, marginBottom: 2 }}>🥑</Text>
+                    <Text style={{ color: '#888', fontSize: 14 }}>지방</Text>
+                    <Text style={{ fontWeight: 'bold', fontSize: 16 }}>{fats}g</Text>
+                  </View>
+                </View>
+                <View style={{ flexDirection: 'row', gap: 12, marginTop: 12 }}>
+                  <TouchableOpacity
+                    style={{ flex: 1, backgroundColor: '#f5f5f5', borderRadius: 12, padding: 18, alignItems: 'center' }}
+                    onPress={() => setShowDescribeModal(true)}
+                  >
+                    <Text style={{ color: '#222', fontSize: 16 }}>Fix Results</Text>
                   </TouchableOpacity>
-                  <TextInput
-                    style={{ fontSize: 16, marginHorizontal: 12, minWidth: 48, textAlign: 'center', paddingVertical: 0, paddingHorizontal: 0 }}
-                    value={grams.toString()}
-                    onChangeText={text => setGrams(Number(text) || 0)}
-                    keyboardType="numeric"
-                    returnKeyType="done"
-                  />
-                  <Text style={{ fontSize: 16, color: '#666' }}>g</Text>
-                  <TouchableOpacity onPress={increment} style={{ padding: 8 }}>
-                    <Text style={{ fontSize: 20, color: '#666' }}>+</Text>
+                  <TouchableOpacity
+                    style={{ flex: 1, backgroundColor: '#000', borderRadius: 12, padding: 18, alignItems: 'center' }}
+                    onPress={handleSave}
+                  >
+                    <Text style={{ color: '#fff', fontSize: 16 }}>Done</Text>
                   </TouchableOpacity>
                 </View>
               </View>
-              <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 18 }}>
-                <Text style={{ fontSize: 20, marginRight: 6 }}>🔥</Text>
-                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#222' }}>{calories}</Text>
-              </View>
-              <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 24 }}>
-                <View style={{ alignItems: 'center', flex: 1 }}>
-                  <Text style={{ fontSize: 28, marginBottom: 2 }}>🥩</Text>
-                  <Text style={{ color: '#888', fontSize: 14 }}>단백질</Text>
-                  <Text style={{ fontWeight: 'bold', fontSize: 16 }}>{protein}g</Text>
-                </View>
-                <View style={{ alignItems: 'center', flex: 1 }}>
-                  <Text style={{ fontSize: 28, marginBottom: 2 }}>🌾</Text>
-                  <Text style={{ color: '#888', fontSize: 14 }}>탄수화물</Text>
-                  <Text style={{ fontWeight: 'bold', fontSize: 16 }}>{carbs}g</Text>
-                </View>
-                <View style={{ alignItems: 'center', flex: 1 }}>
-                  <Text style={{ fontSize: 28, marginBottom: 2 }}>🥑</Text>
-                  <Text style={{ color: '#888', fontSize: 14 }}>지방</Text>
-                  <Text style={{ fontWeight: 'bold', fontSize: 16 }}>{fats}g</Text>
-                </View>
-              </View>
-              <View style={{ flexDirection: 'row', gap: 12, marginTop: 12 }}>
-                <TouchableOpacity
-                  style={{ flex: 1, backgroundColor: '#f5f5f5', borderRadius: 12, padding: 18, alignItems: 'center' }}
-                  onPress={() => setShowDescribeModal(true)}
-                >
-                  <Text style={{ color: '#222', fontSize: 16 }}>Fix Results</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                  style={{ flex: 1, backgroundColor: '#000', borderRadius: 12, padding: 18, alignItems: 'center' }}
-                  onPress={handleSave}
-                >
-                  <Text style={{ color: '#fff', fontSize: 16 }}>Done</Text>
-                </TouchableOpacity>
-              </View>
-            </View>
+            </ScrollView>
           </View>
         </View>
       </Modal>
