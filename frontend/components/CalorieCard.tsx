@@ -11,7 +11,7 @@
  * - caloriePercentage: number (목표 대비 섭취 비율)
  */
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { View } from 'react-native';
 import { ThemedText } from './ThemedText';
 import { CircularProgress } from './CircularProgress';
@@ -48,7 +48,11 @@ export const CalorieCard: React.FC<CalorieCardProps> = ({
               {isValidNumber(consumedCalories) ? `${consumedCalories}kcal` : "0kcal"}
             </ThemedText>
             <ThemedText style={globalStyles.caloriesLeftText}>
-              {isValidNumber(caloriesLeft) ? `${caloriesLeft}kcal 남음` : "2000kcal 남음"}
+              {isValidNumber(caloriesLeft)
+                ? caloriesLeft >= 0
+                  ? `${caloriesLeft}kcal 남음`
+                  : `${Math.abs(caloriesLeft)}kcal 초과`
+                : "2000kcal 남음"}
             </ThemedText>
           </View>
         </View>

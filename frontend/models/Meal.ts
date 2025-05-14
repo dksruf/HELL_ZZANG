@@ -3,6 +3,7 @@
  *
  * 한 끼 식사의 영양 정보와 날짜, 이미지를 관리하는 데이터 모델입니다.
  * - name: 음식 이름
+ * - koreanName: 한글 이름
  * - calories: 100g당 칼로리
  * - protein, carbs, fat: 100g당 영양성분(g)
  * - grams: 실제 섭취량(g)
@@ -24,6 +25,7 @@ export class Meal {
     public fat: number,
     public grams: number,
     public imageUri?: string,
+    public koreanName: string = '',
     date?: string
   ) {
     this.date = date || getTodayString();
@@ -47,6 +49,7 @@ export class Meal {
 
   static fromFormData(
     name: string,
+    koreanName: string = '',
     calories: number,
     protein: number,
     carbs: number,
@@ -63,6 +66,7 @@ export class Meal {
       fat,
       grams,
       imageUri,
+      koreanName,
       date || getTodayString()
     );
   }
@@ -76,6 +80,7 @@ export class Meal {
       json.fat,
       json.grams,
       json.imageUri,
+      json.koreanName || '',
       json.date
     );
   }

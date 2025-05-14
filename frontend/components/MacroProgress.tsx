@@ -35,7 +35,7 @@ export const MacroProgress: React.FC<MacroProgressProps> = ({ macro }) => {
   
   // 표시할 텍스트 생성
   const displayCurrent = `${Math.round(current)}g`;
-  const displayRemaining = `${Math.abs(Math.round(remaining))}g ${isOverTarget ? '초과' : '남음'}`;
+  const displayRemaining = `${Math.abs(Math.round(remaining))}g\n${isOverTarget ? '초과' : '남음'}`;
 
   // 색상 설정
   const progressColor = isOverTarget ? '#FF6B6B' : macro.color;

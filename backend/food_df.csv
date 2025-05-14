@@ -1,10 +1,10 @@
-food_name,calories,protein,carbs,fats
-almond,100,100,100,100
-boiled egg,200,200,200,200
-chicken breast,300,300,300,300
-fried egg,400,400,400,400
-multigrain rice,500,500,500,500
-pork,600,600,600,600
-sweetpotato,700,700,700,700
-tomato,800,800,800,800
-white rice,900,900,900,900
+food_name,calories,protein,carbs,fats,korean_name
+almond,578,21.26,19.74,50.64,아몬드
+boiled egg,154,12.53,1.12,10.57,삶은 계란
+chicken breast,109,22.98,0,1.23,닭가슴살
+fried egg,89,6.24,0.43,6.76,계란후라이
+multigrain rice,163,4.21,35.09,0.95,잡곡밥
+pork,271,27.34,0,17.04,돼지고기
+sweetpotato,128,1.72,30.36,0.15,고구마
+tomato,18,0.88,3.92,0.2,토마토
+white rice,143,2.72,31.02,0.48,흰쌀밥

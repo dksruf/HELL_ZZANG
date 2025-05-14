@@ -20,6 +20,7 @@ interface CameraModalProps {
   onClose: () => void;
   onImageAnalyzed: (imageUri: string, analyzedData: {
     name: string;
+    koreanName?: string;
     calories: number;
     protein: number;
     carbs: number;
@@ -78,6 +79,7 @@ export const CameraModal: React.FC<CameraModalProps> = ({
       // 분석 결과를 부모 컴포넌트로 전달
       onImageAnalyzed(imageUri, {
         name: result.food || '음식',
+        koreanName: result.food_korean,
         calories: result.calories || 0,
         protein: result.protein || 0,
         carbs: result.carbs || 0,

@@ -10,6 +10,7 @@ interface AnalysisResultModalProps {
   visible: boolean;
   imageUri?: string;
   initialName: string;
+  initialKoreanName?: string;
   initialCalories: number;
   initialProtein: number;
   initialCarbs: number;
@@ -18,6 +19,7 @@ interface AnalysisResultModalProps {
   onClose: () => void;
   onSave: (data: {
     name: string;
+    koreanName?: string;
     calories: number;
     protein: number;
     carbs: number;
@@ -31,6 +33,7 @@ export const AnalysisResultModal: React.FC<AnalysisResultModalProps> = ({
   visible,
   imageUri: initialImageUri,
   initialName,
+  initialKoreanName,
   initialCalories,
   initialProtein,
   initialCarbs,
@@ -40,6 +43,7 @@ export const AnalysisResultModal: React.FC<AnalysisResultModalProps> = ({
   onSave,
 }) => {
   const [name, setName] = useState(initialName);
+  const [koreanName, setKoreanName] = useState(initialKoreanName || initialName);
   const [calories, setCalories] = useState(initialCalories);
   const [protein, setProtein] = useState(initialProtein);
   const [carbs, setCarbs] = useState(initialCarbs);
@@ -56,12 +60,14 @@ export const AnalysisResultModal: React.FC<AnalysisResultModalProps> = ({
 
   useEffect(() => {
     setImageUri(initialImageUri);
+    setName(initialName);
+    setKoreanName(initialKoreanName || '');
     setBaseCalories(initialCalories);
     setBaseProtein(initialProtein);
     setBaseCarbs(initialCarbs);
     setBaseFats(initialFats);
     setBaseGrams(initialGrams);
-  }, [initialImageUri, initialCalories, initialProtein, initialCarbs, initialFats, initialGrams]);
+  }, [initialImageUri, initialName, initialKoreanName, initialCalories, initialProtein, initialCarbs, initialFats, initialGrams]);
 
   // 수량(grams)이 변경될 때 칼로리와 영양성분을 비례하여 업데이트
   useEffect(() => {
@@ -75,6 +81,7 @@ export const AnalysisResultModal: React.FC<AnalysisResultModalProps> = ({
   const handleSave = () => {
     onSave({
       name,
+      koreanName,
       calories,
       protein,
       carbs,
@@ -143,19 +150,24 @@ export const AnalysisResultModal: React.FC<AnalysisResultModalProps> = ({
             )}
             <View style={{ padding: 24 }}>
               <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
-                <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#222' }}>{name}</Text>
+                <View>
+                  <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#222' }}>{koreanName}</Text>
+                  <Text style={{ fontSize: 16, color: '#666', marginTop: 4 }}>{name}</Text>
+                </View>
                 <View style={{ flexDirection: 'row', alignItems: 'center', backgroundColor: '#fafafa', borderRadius: 16, paddingHorizontal: 8, paddingVertical: 4 }}>
-                  <TouchableOpacity onPress={decrement} style={{ padding: 6 }}>
-                    <Text style={{ fontSize: 22, color: '#888' }}>-</Text>
+                  <TouchableOpacity onPress={decrement} style={{ padding: 8 }}>
+                    <Text style={{ fontSize: 20, color: '#666' }}>-</Text>
                   </TouchableOpacity>
                   <TextInput
-                    style={{ fontSize: 18, marginHorizontal: 8, width: 50, textAlign: 'center' }}
+                    style={{ fontSize: 16, marginHorizontal: 12, minWidth: 48, textAlign: 'center', paddingVertical: 0, paddingHorizontal: 0 }}
                     value={grams.toString()}
-                    onChangeText={(text) => setGrams(Number(text) || 0)}
+                    onChangeText={text => setGrams(Number(text) || 0)}
                     keyboardType="numeric"
+                    returnKeyType="done"
                   />
-                  <TouchableOpacity onPress={increment} style={{ padding: 6 }}>
-                    <Text style={{ fontSize: 22, color: '#888' }}>+</Text>
+                  <Text style={{ fontSize: 16, color: '#666' }}>g</Text>
+                  <TouchableOpacity onPress={increment} style={{ padding: 8 }}>
+                    <Text style={{ fontSize: 20, color: '#666' }}>+</Text>
                   </TouchableOpacity>
                 </View>
               </View>
@@ -166,17 +178,17 @@ export const AnalysisResultModal: React.FC<AnalysisResultModalProps> = ({
               <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 24 }}>
                 <View style={{ alignItems: 'center', flex: 1 }}>
                   <Text style={{ fontSize: 28, marginBottom: 2 }}>🥩</Text>
-                  <Text style={{ color: '#888', fontSize: 14 }}>Protein</Text>
+                  <Text style={{ color: '#888', fontSize: 14 }}>단백질</Text>
                   <Text style={{ fontWeight: 'bold', fontSize: 16 }}>{protein}g</Text>
                 </View>
                 <View style={{ alignItems: 'center', flex: 1 }}>
                   <Text style={{ fontSize: 28, marginBottom: 2 }}>🌾</Text>
-                  <Text style={{ color: '#888', fontSize: 14 }}>Carbs</Text>
+                  <Text style={{ color: '#888', fontSize: 14 }}>탄수화물</Text>
                   <Text style={{ fontWeight: 'bold', fontSize: 16 }}>{carbs}g</Text>
                 </View>
                 <View style={{ alignItems: 'center', flex: 1 }}>
                   <Text style={{ fontSize: 28, marginBottom: 2 }}>🥑</Text>
-                  <Text style={{ color: '#888', fontSize: 14 }}>Fats</Text>
+                  <Text style={{ color: '#888', fontSize: 14 }}>지방</Text>
                   <Text style={{ fontWeight: 'bold', fontSize: 16 }}>{fats}g</Text>
                 </View>
               </View>

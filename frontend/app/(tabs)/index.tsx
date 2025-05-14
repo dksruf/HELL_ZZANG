@@ -295,6 +295,7 @@ export default function HomeScreen() {
   const [analysisResultVisible, setAnalysisResultVisible] = useState(false);
   const [analysisResult, setAnalysisResult] = useState({
     name: '',
+    koreanName: '',
     calories: 0,
     protein: 0,
     carbs: 0,
@@ -346,7 +347,10 @@ export default function HomeScreen() {
   const caloriesLeft = tracker.getCaloriesLeft();
   const macros = tracker.getMacros();
   const totalCalories = tracker.getTotalCalories();
-  const consumedCalories = totalCalories - caloriesLeft;
+  const consumedCalories = tracker.getMeals(today).reduce(
+    (total, meal) => total + meal.calories,
+    0
+  );
   const consumedMacros = tracker.getConsumedMacros(today);
 
   // ============================================================================
@@ -388,6 +392,7 @@ export default function HomeScreen() {
     try {
       const mealWithDate = Meal.fromFormData(
         meal.name,
+        meal.koreanName,
         meal.calories,
         meal.protein,
         meal.carbs,
@@ -430,6 +435,7 @@ export default function HomeScreen() {
       const meal = tracker.getMeals(today)[index];
       setAnalysisResult({
         name: meal.name,
+        koreanName: meal.koreanName,
         calories: meal.calories,
         protein: meal.protein,
         carbs: meal.carbs,
@@ -482,6 +488,7 @@ export default function HomeScreen() {
       
       setAnalysisResult({
         name: data.food || '음식',
+        koreanName: data.korean_name || data.food || '음식',
         calories: data.calories || 0,
         protein: data.protein || 0,
         carbs: data.carbs || 0,
@@ -505,6 +512,7 @@ export default function HomeScreen() {
   // ============================================================================
   const handleImageAnalyzed = (imageUri: string, analyzedData: {
     name: string;
+    koreanName?: string;
     calories: number;
     protein: number;
     carbs: number;
@@ -512,6 +520,7 @@ export default function HomeScreen() {
   }) => {
     setAnalysisResult({
       name: analyzedData.name || '',
+      koreanName: analyzedData.koreanName || analyzedData.name || '',
       calories: analyzedData.calories || 0,
       protein: analyzedData.protein || 0,
       carbs: analyzedData.carbs || 0,
@@ -537,6 +546,10 @@ export default function HomeScreen() {
   }, []);
 
   if (!isReady) return <LoadingOverlay visible={true} />;
+
+  // MacrosCard에 전달하는 값 디버깅 출력
+  console.log('MacrosCard 목표값:', tracker.getMacros());
+  console.log('MacrosCard 섭취값:', consumedMacros);
 
   return (
     <ThemedView style={styles.container} key={refreshKey}>
@@ -580,11 +593,14 @@ export default function HomeScreen() {
         onSave={() => {
           const meal = Meal.fromFormData(
             foodName,
+            foodName, // 한글 이름이 없는 경우 영어 이름 사용
             parseInt(foodCalories),
             parseInt(foodProtein),
             parseInt(foodCarbs),
             parseInt(foodFat),
             parseInt(foodGrams),
+            undefined,
+            today
           );
           handleAddMeal(meal);
           setDescribeModalVisible(false);
@@ -607,6 +623,7 @@ export default function HomeScreen() {
         visible={analysisResultVisible}
         imageUri={analysisResult.imageUri}
         initialName={analysisResult.name}
+        initialKoreanName={analysisResult.koreanName}
         initialCalories={analysisResult.calories}
         initialProtein={analysisResult.protein}
         initialCarbs={analysisResult.carbs}
@@ -619,6 +636,7 @@ export default function HomeScreen() {
         onSave={(data) => {
           const meal = Meal.fromFormData(
             data.name,
+            data.koreanName || data.name,
             data.calories,
             data.protein,
             data.carbs,
@@ -648,7 +666,10 @@ export default function HomeScreen() {
           caloriePercentage={caloriePercentage}
         />
 
-        <MacrosCard macros={tracker.getMacros()} consumedMacros={consumedMacros} />
+        <MacrosCard
+          macros={tracker.getMacros()}
+          consumedMacros={consumedMacros}
+        />
 
         <RecentMealsSection
           meals={tracker.getMeals(today)}

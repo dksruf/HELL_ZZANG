@@ -66,6 +66,7 @@ export const AddMealModal: React.FC<AddMealModalProps> = ({
   const [showFixModal, setShowFixModal] = useState(false);
   const [editingFood, setEditingFood] = useState({
     name: '',
+    koreanName: '',
     quantity: 100,
     calories: 0,
     protein: 0,
@@ -140,6 +141,7 @@ export const AddMealModal: React.FC<AddMealModalProps> = ({
       // 분석 결과로 editingFood 상태 업데이트
       const analyzedFood = {
         name: result.food || '음식',
+        koreanName: result.food_korean,
         quantity: 100,
         calories: result.calories || 0,
         protein: result.protein || 0,
@@ -203,6 +205,7 @@ export const AddMealModal: React.FC<AddMealModalProps> = ({
 
     const meal = Meal.fromFormData(
       foodName,
+      editingFood.koreanName || foodName,
       parseInt(foodCalories),
       parseInt(foodProtein),
       parseInt(foodCarbs),

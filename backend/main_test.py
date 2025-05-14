@@ -10,7 +10,7 @@ import os
 from tensorflow.keras.applications.mobilenet_v2 import preprocess_input
 
 #==================================================================================================================#
-class_names = ["삶은계란", "닭가슴살", "계란후라이", "볶음밥", "잡곡밥", "돼지고기", "백미밥"] # -> 음식 인덱스. 아마도 이렇게
+class_names = ["아몬드","삶은계란", "닭가슴살", "계란후라이","잡곡밥", "돼지고기", "고구마","토마토","백미밥"] # -> 음식 인덱스. 아마도 이렇게
 
 app = FastAPI()
 
@@ -58,7 +58,7 @@ def create_model ():
     x = tf.keras.layers.Dense(128, activation='relu')(pretrained_model.output)
     x = tf.keras.layers.Dense(128, activation='relu')(x)
 
-    outputs = tf.keras.layers.Dense(7, activation='softmax')(x)
+    outputs = tf.keras.layers.Dense(9, activation='softmax')(x)  # 9개 클래스로 수정
     #outputs = tf.keras.layers.Dense(107, activation='softmax')(x)
 
     model = tf.keras.Model(inputs, outputs)
@@ -225,16 +225,18 @@ def classify_food(image_bytes):
         # CLASS_LABELS에서 직접 음식 이름 가져오기
         try:
             food_name = food_df["food_name"][predicted_class]
+            korean_name = food_df["korean_name"][predicted_class]
         except IndexError:
             food_name = "Unknown"
+            korean_name = "알 수 없음"
             print(f"IndexError: Predicted class {predicted_class} out of range for {len(food_df)} classes")
 
-        print(f"Predicted class: {predicted_class}, Food: {food_name}, Confidence: {confidence}")
-        return food_name, confidence
+        print(f"Predicted class: {predicted_class}, Food: {food_name}, Korean: {korean_name}, Confidence: {confidence}")
+        return food_name, korean_name, confidence
     except Exception as e:
         print(f"분류 오류: {str(e)}")
         # 기본값 반환
-        return "Unknown", 0.0
+        return "Unknown", "알 수 없음", 0.0
 
 #==================================================================================================================#
 
@@ -254,8 +256,8 @@ async def predict(file: UploadFile = File(...)):
             print("이미지 데이터가 비어 있습니다.")
             return {"error": "이미지 데이터가 비어 있습니다."}
             
-        food_name, confidence = classify_food(image_bytes)
-        print(f"분류 결과: {food_name}, 신뢰도: {confidence}")  # 분류 결과 출력
+        food_name, korean_name, confidence = classify_food(image_bytes)
+        print(f"분류 결과: {food_name}({korean_name}), 신뢰도: {confidence}")  # 분류 결과 출력
 
         food_info = get_food_info(food_name)
         print(f"음식 정보: {food_info}")  # 음식 정보 출력
@@ -263,11 +265,17 @@ async def predict(file: UploadFile = File(...)):
         if food_info:
             return {
                 "food": food_name,
+                "koreanName": korean_name,
                 "confidence": float(confidence),
                 **food_info
             }
         else:
-            return {"food": food_name, "confidence": float(confidence), "message": "영양 정보 없음"}
+            return {
+                "food": food_name,
+                "koreanName": korean_name,
+                "confidence": float(confidence),
+                "message": "영양 정보 없음"
+            }
     except Exception as e:
         print(f"예측 API 오류: {str(e)}")
         return {"error": f"이미지 처리 중 오류가 발생했습니다: {str(e)}"}

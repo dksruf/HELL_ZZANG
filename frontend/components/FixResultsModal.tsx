@@ -24,6 +24,7 @@ import { styles } from '../styles/index';
 
 interface AnalyzedFoodData {
   name: string;
+  koreanName: string;
   quantity: number;
   calories: number;
   protein: number;
@@ -76,6 +77,17 @@ export const FixResultsModal: React.FC<FixResultsModalProps> = ({
                 placeholderTextColor="#999"
                 value={editingFood.name}
                 onChangeText={(text) => setEditingFood({...editingFood, name: text})}
+              />
+            </View>
+            
+            <View style={styles.inputContainer}>
+              <ThemedText style={styles.inputLabel}>한글 이름</ThemedText>
+              <TextInput
+                style={styles.largeInput}
+                placeholder="예: 치킨 샐러드"
+                placeholderTextColor="#999"
+                value={editingFood.koreanName}
+                onChangeText={(text) => setEditingFood({...editingFood, koreanName: text})}
               />
             </View>
             

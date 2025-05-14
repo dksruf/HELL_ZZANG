@@ -24,13 +24,13 @@ export const MealCard: React.FC<MealCardProps> = ({ meal, onDelete, onEdit }) =>
         )}
         <View>
           <View style={styles.mealNameContainer}>
-            <ThemedText style={styles.mealName}>{meal.name}</ThemedText>
+            <ThemedText style={styles.mealName}>{meal.koreanName || meal.name}</ThemedText>
             <ThemedText style={styles.mealGrams}>{meal.grams}g</ThemedText>
           </View>
           <View style={styles.macroTags}>
-            <ThemedText style={styles.macroTag}>🥩 {meal.protein}g</ThemedText>
-            <ThemedText style={styles.macroTag}>🌾 {meal.carbs}g</ThemedText>
-            <ThemedText style={styles.macroTag}>🥑 {meal.fat}g</ThemedText>
+            <ThemedText style={styles.macroTag}>🥩{"\n"}{meal.protein}g </ThemedText>
+            <ThemedText style={styles.macroTag}>🌾{"\n"}{meal.carbs}g </ThemedText>
+            <ThemedText style={styles.macroTag}>🥑{"\n"}{meal.fat}g </ThemedText>
           </View>
         </View>
       </View>

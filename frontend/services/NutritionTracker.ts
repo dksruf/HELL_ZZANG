@@ -122,6 +122,7 @@ export class NutritionTracker {
         for (const meal of this.meals[date]) {
           await storageService.saveData('meals', {
             name: meal.name,
+            koreanName: meal.koreanName,
             calories: meal.calories,
             protein: meal.protein,
             carbs: meal.carbs,
@@ -138,6 +139,7 @@ export class NutritionTracker {
       for (const food of this.savedFoods) {
         await storageService.saveData('savedFoods', {
           name: food.name,
+          koreanName: food.koreanName,
           calories: food.calories,
           protein: food.protein,
           carbs: food.carbs,
@@ -161,6 +163,7 @@ export class NutritionTracker {
       mealData.fat,
       mealData.grams,
       mealData.imageUri,
+      mealData.koreanName || '',
       mealData.date
     );
   }
@@ -221,12 +224,12 @@ export class NutritionTracker {
       return 0;
     }
 
-    // 실제 그램당 칼로리 계산
+    // 실제 섭취 칼로리 합산 (환산 없이)
     const consumedCalories = this.getMeals().reduce(
-      (total, meal) => total + meal.calculateActualCalories(),
+      (total, meal) => total + meal.calories,
       0
     );
-    return Math.max(0, this.totalCalories - consumedCalories);
+    return this.totalCalories - consumedCalories;
   }
 
   getCaloriePercentage(): number {
@@ -235,12 +238,11 @@ export class NutritionTracker {
       return 0; // 기본값으로 0% 반환
     }
 
-    // 소비된 칼로리 계산 - 실제 그램당 칼로리 반영
+    // 소비된 칼로리 계산 (환산 없이)
     const consumedCalories = this.getMeals().reduce(
-      (total, meal) => total + meal.calculateActualCalories(),
+      (total, meal) => total + meal.calories,
       0
     );
-    
     // 소비된 칼로리 퍼센티지 반환
     return Math.min(100, Math.round((consumedCalories / this.totalCalories) * 100));
   }
@@ -292,13 +294,9 @@ export class NutritionTracker {
     
     // 각 식사의 실제 섭취량을 계산
     for (const meal of meals) {
-      const actualProtein = meal.calculateActualProtein();
-      const actualCarbs = meal.calculateActualCarbs();
-      const actualFat = meal.calculateActualFat();
-      
-      protein += actualProtein;
-      carbs += actualCarbs;
-      fat += actualFat;
+      protein += meal.protein;
+      carbs += meal.carbs;
+      fat += meal.fat;
     }
 
     // 소수점 첫째자리까지 반올림
