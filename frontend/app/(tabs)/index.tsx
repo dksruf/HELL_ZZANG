@@ -357,36 +357,29 @@ export default function HomeScreen() {
   // ============================================================================
   // 이벤트 핸들러 함수들
   // ============================================================================
-  const handleSettingsSave = async (settings: {
-    totalCalories: number;
-    macros: Macro[];
-    userName: string;
-  }) => {
-    setTotalCalories(settings.totalCalories);
-    setMacros(settings.macros);
-    setUserName(settings.userName);
-    setModalVisible(false);
-
-    // NutritionTracker 업데이트
-    await tracker.updateSettings(settings.totalCalories, settings.macros);
-
-    // 설정 저장
+  const handleSaveSettings = async (settings: { totalCalories: number; macros: Macro[]; userName: string }) => {
     try {
+      // 설정 저장
       await storageService.saveData('settings', {
         id: 'current',
-        totalCalories: settings.totalCalories,
-        macros: settings.macros,
-        userName: settings.userName
+        ...settings
       });
+
+      // NutritionTracker 업데이트
+      await tracker.updateSettings(settings.totalCalories, settings.macros);
       
-      // 화면 갱신
+      // 사용자 정보 업데이트
+      const user = new User(settings.userName);
+      await tracker.setCurrentUser(user);
+
+      setTotalCalories(settings.totalCalories);
+      setMacros(settings.macros);
+      setUserName(settings.userName);
+      setShowSettings(false);
       setRefreshKey(prev => prev + 1);
-      
-      // 성공 메시지 표시
-      showAlert('성공', '설정이 저장되었습니다.');
     } catch (error) {
       console.error('설정 저장 실패:', error);
-      showAlert('오류', '설정 저장 중 오류가 발생했습니다.');
+      alert('설정 저장에 실패했습니다.');
     }
   };
 
@@ -593,7 +586,7 @@ export default function HomeScreen() {
       <SettingsModal
         visible={modalVisible}
         onClose={() => setModalVisible(false)}
-        onSave={handleSettingsSave}
+        onSave={handleSaveSettings}
         currentValues={{
           totalCalories: tracker.getTotalCalories(),
           macros: tracker.getMacros(),

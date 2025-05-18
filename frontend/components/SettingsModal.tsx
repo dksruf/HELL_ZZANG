@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Modal, View, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
 import { ThemedText } from './ThemedText';
 import { Macro } from '../models/Macro';
+import { User } from '../models/User';
 
 interface SettingsModalProps {
   visible: boolean;
@@ -63,6 +64,9 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
 
     const calories = parseInt(totalCalories.toString());
     const macros = calculateMacros(calories);
+    
+    // 사용자 정보 생성 및 저장
+    const user = new User(userName.trim());
     
     onSave({
       totalCalories: calories,

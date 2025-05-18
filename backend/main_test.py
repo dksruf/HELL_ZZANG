@@ -314,6 +314,13 @@ USER_LOGS_DIR = './user_logs'
 @app.post('/user-logs/{user_name}')
 async def save_user_log(user_name: str, data: dict = Body(...)):
     try:
+        # 사용자 이름 유효성 검사
+        if not user_name or user_name == 'undefined':
+            raise HTTPException(
+                status_code=400,
+                detail="유효하지 않은 사용자 이름입니다. 로그인이 필요합니다."
+            )
+
         # 사용자 디렉토리 생성
         user_dir = os.path.join(USER_LOGS_DIR, user_name)
         os.makedirs(user_dir, exist_ok=True)
@@ -361,8 +368,13 @@ async def save_user_log(user_name: str, data: dict = Body(...)):
         
         return {"message": "로그 저장 완료", "file": file_path}
     
+    except HTTPException as he:
+        raise he
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        raise HTTPException(
+            status_code=500,
+            detail=f"로그 저장 중 오류가 발생했습니다: {str(e)}"
+        )
 
 # 사용자별 로그 조회 API
 @app.get('/user-logs/{user_name}/{date}')

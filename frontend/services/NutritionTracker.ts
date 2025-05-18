@@ -224,7 +224,13 @@ export class NutritionTracker {
     
     // 백엔드에 로그 저장 (imageUri와 goal 관련 필드 제외)
     try {
-      const response = await fetch(`http://localhost:8000/user-logs/${this.currentUser?.name}`, {
+      // 사용자 이름 유효성 검사
+      if (!this.currentUser?.name) {
+        console.warn('사용자 로그인 정보가 없어 로그를 저장할 수 없습니다.');
+        return;
+      }
+
+      const response = await fetch(`http://localhost:8000/user-logs/${this.currentUser.name}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -241,12 +247,13 @@ export class NutritionTracker {
           goalProtein: this.macros[0].total,
           goalCarbs: this.macros[1].total,
           goalFat: this.macros[2].total,
-          hasImage: !!meal.imageUri  // 이미지 사용 여부 추가
+          hasImage: !!meal.imageUri
         })
       });
       
       if (!response.ok) {
-        throw new Error('로그 저장 실패');
+        const errorData = await response.json();
+        throw new Error(errorData.detail || '로그 저장 실패');
       }
     } catch (error) {
       console.error('백엔드 로그 저장 실패:', error);

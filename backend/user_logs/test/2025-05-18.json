@@ -1,0 +1,24 @@
+{
+  "userName": "test",
+  "date": "2025-05-18",
+  "meals": [
+    {
+      "name": "fried egg",
+      "calories": 89,
+      "protein": 6,
+      "carbs": 0,
+      "fat": 7,
+      "grams": 100,
+      "date": "2025-05-18",
+      "hasImage": true
+    }
+  ],
+  "goalCalories": 2000,
+  "goalProtein": 150,
+  "goalCarbs": 250,
+  "goalFat": 44,
+  "totalCalories": 89,
+  "totalProtein": 6,
+  "totalCarbs": 0,
+  "totalFat": 7
+}
