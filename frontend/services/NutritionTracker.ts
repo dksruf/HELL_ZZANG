@@ -1,5 +1,7 @@
 import { Macro } from '../models/Macro';
 import { Meal } from '../models/Meal';
+import { DailyStats } from '../models/DailyStats';
+import { User } from '../models/User';
 import { Platform } from 'react-native';
 import { storageService } from './StorageService';
 
@@ -38,6 +40,8 @@ export class NutritionTracker {
   private macros: Macro[];
   private meals: { [date: string]: Meal[] } = {};
   private savedFoods: Meal[] = [];
+  private dailyStats: { [date: string]: DailyStats } = {};
+  private currentUser: User | null = null;
   private isWeb: boolean;
   private isInitialized: boolean = false;
 
@@ -52,20 +56,31 @@ export class NutritionTracker {
     if (this.isWeb) {
       try {
         await storageService.init();
+        this.isInitialized = true;  // 초기화 완료 표시를 먼저 설정
         await this.loadFromStorage();
-        this.isInitialized = true;
       } catch (error) {
         console.error('데이터 초기화 실패:', error);
       }
     }
   }
 
+  // 사용자 설정
+  async setCurrentUser(user: User) {
+    this.currentUser = user;
+    await this.loadFromStorage();
+  }
+
+  // 현재 사용자 가져오기
+  getCurrentUser(): User | null {
+    return this.currentUser;
+  }
+
   private async loadFromStorage() {
-    if (!this.isWeb || !this.isInitialized) return;
+    if (!this.isWeb || !this.currentUser) return;  // isInitialized 체크 제거
 
     try {
       // 설정 로드
-      const settings = await storageService.getData('settings', 'current');
+      const settings = await storageService.getData('settings', `${this.currentUser.name}_current`);
       if (settings) {
         this.totalCalories = settings.totalCalories;
         this.macros = settings.macros.map((m: any) => new Macro(
@@ -75,30 +90,38 @@ export class NutritionTracker {
           m.unit || 'g',
           m.color
         ));
-      } else {
-        // settings가 없으면(첫 실행) 현재 값을 저장해서 초기화
-        await storageService.saveData('settings', {
-          id: 'current',
-          totalCalories: this.totalCalories,
-          macros: this.macros
-        });
       }
 
       // 식사 데이터 로드
       const meals = await storageService.getData('meals');
       if (meals) {
-        this.meals = meals.reduce((acc, m) => {
-          const date = m.date || this.getTodayString();
-          if (!acc[date]) acc[date] = [];
-          acc[date].push(this.createMealFromStoredData(m));
-          return acc;
-        }, {} as { [date: string]: Meal[] });
+        this.meals = meals
+          .filter((m: any) => m.userName === this.currentUser?.name)
+          .reduce((acc, m) => {
+            const date = m.date || this.getTodayString();
+            if (!acc[date]) acc[date] = [];
+            acc[date].push(this.createMealFromStoredData(m));
+            return acc;
+          }, {} as { [date: string]: Meal[] });
       }
 
       // 저장된 음식 로드
       const savedFoods = await storageService.getData('savedFoods');
       if (savedFoods) {
-        this.savedFoods = savedFoods.map((f: any) => this.createMealFromStoredData(f));
+        this.savedFoods = savedFoods
+          .filter((f: any) => f.userName === this.currentUser?.name)
+          .map((f: any) => this.createMealFromStoredData(f));
+      }
+
+      // 일별 통계 로드
+      const dailyStats = await storageService.getData('dailyStats');
+      if (dailyStats) {
+        this.dailyStats = dailyStats
+          .filter((stat: any) => stat.userName === this.currentUser?.name)
+          .reduce((acc, stat) => {
+            acc[stat.date] = DailyStats.fromJSON(stat);
+            return acc;
+          }, {} as { [date: string]: DailyStats });
       }
     } catch (error) {
       console.error('데이터 로드 실패:', error);
@@ -106,12 +129,12 @@ export class NutritionTracker {
   }
 
   private async saveToStorage() {
-    if (!this.isWeb || !this.isInitialized) return;
+    if (!this.isWeb || !this.isInitialized || !this.currentUser) return;
 
     try {
       // 설정 저장
       await storageService.saveData('settings', {
-        id: 'current',
+        id: `${this.currentUser.name}_current`,
         totalCalories: this.totalCalories,
         macros: this.macros
       });
@@ -121,8 +144,8 @@ export class NutritionTracker {
       for (const date in this.meals) {
         for (const meal of this.meals[date]) {
           await storageService.saveData('meals', {
+            userName: this.currentUser.name,
             name: meal.name,
-            koreanName: meal.koreanName,
             calories: meal.calories,
             protein: meal.protein,
             carbs: meal.carbs,
@@ -138,14 +161,32 @@ export class NutritionTracker {
       await storageService.clearStore('savedFoods');
       for (const food of this.savedFoods) {
         await storageService.saveData('savedFoods', {
+          userName: this.currentUser.name,
           name: food.name,
-          koreanName: food.koreanName,
           calories: food.calories,
           protein: food.protein,
           carbs: food.carbs,
           fat: food.fat,
           grams: food.grams,
           imageUri: food.imageUri
+        });
+      }
+
+      // 일별 통계 저장
+      await storageService.clearStore('dailyStats');
+      for (const date in this.dailyStats) {
+        await storageService.saveData('dailyStats', {
+          userName: this.currentUser.name,
+          date: date,
+          totalCalories: this.dailyStats[date].totalCalories,
+          targetCalories: this.dailyStats[date].targetCalories,
+          totalProtein: this.dailyStats[date].totalProtein,
+          targetProtein: this.dailyStats[date].targetProtein,
+          totalCarbs: this.dailyStats[date].totalCarbs,
+          targetCarbs: this.dailyStats[date].targetCarbs,
+          totalFat: this.dailyStats[date].totalFat,
+          targetFat: this.dailyStats[date].targetFat,
+          imageCount: this.dailyStats[date].imageCount
         });
       }
     } catch (error) {
@@ -163,7 +204,7 @@ export class NutritionTracker {
       mealData.fat,
       mealData.grams,
       mealData.imageUri,
-      mealData.koreanName || '',
+      mealData.name || '',
       mealData.date
     );
   }
@@ -179,12 +220,45 @@ export class NutritionTracker {
     const date = meal.date || this.getTodayString();
     if (!this.meals[date]) this.meals[date] = [];
     this.meals[date].push(meal);
+    this.updateDailyStats(date);
+    
+    // 백엔드에 로그 저장 (imageUri와 goal 관련 필드 제외)
+    try {
+      const response = await fetch(`http://localhost:8000/user-logs/${this.currentUser?.name}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          name: meal.name,
+          calories: meal.calories,
+          protein: meal.protein,
+          carbs: meal.carbs,
+          fat: meal.fat,
+          grams: meal.grams,
+          date: date,
+          goalCalories: this.totalCalories,
+          goalProtein: this.macros[0].total,
+          goalCarbs: this.macros[1].total,
+          goalFat: this.macros[2].total,
+          hasImage: !!meal.imageUri  // 이미지 사용 여부 추가
+        })
+      });
+      
+      if (!response.ok) {
+        throw new Error('로그 저장 실패');
+      }
+    } catch (error) {
+      console.error('백엔드 로그 저장 실패:', error);
+    }
+    
     await this.saveToStorage();
   }
 
   async updateMeal(date: string, index: number, meal: Meal) {
     if (date in this.meals && index >= 0 && index < this.meals[date].length) {
       this.meals[date][index] = meal;
+      this.updateDailyStats(date);
       await this.saveToStorage();
     }
   }
@@ -192,6 +266,7 @@ export class NutritionTracker {
   async deleteMeal(date: string, index: number) {
     if (date in this.meals && index >= 0 && index < this.meals[date].length) {
       this.meals[date].splice(index, 1);
+      this.updateDailyStats(date);
       await this.saveToStorage();
     }
   }
@@ -305,5 +380,119 @@ export class NutritionTracker {
       carbs: Math.round(carbs * 10) / 10,
       fat: Math.round(fat * 10) / 10
     };
+  }
+
+  private updateDailyStats(date: string) {
+    const meals = this.getMeals(date);
+    const consumedMacros = this.getConsumedMacros(date);
+    const imageCount = meals.filter(meal => meal.imageUri).length;
+
+    this.dailyStats[date] = new DailyStats(
+      date,
+      this.getTotalCaloriesConsumed(date),
+      this.totalCalories,
+      consumedMacros.protein,
+      this.macros.find(m => m.name === 'protein')?.total || 0,
+      consumedMacros.carbs,
+      this.macros.find(m => m.name === 'carbs')?.total || 0,
+      consumedMacros.fat,
+      this.macros.find(m => m.name === 'fat')?.total || 0,
+      imageCount
+    );
+  }
+
+  private getTotalCaloriesConsumed(date?: string): number {
+    const meals = this.getMeals(date);
+    return meals.reduce((total, meal) => total + meal.calculateActualCalories(), 0);
+  }
+
+  // 일별 통계 조회
+  getDailyStats(date?: string): DailyStats | null {
+    const d = date || this.getTodayString();
+    return this.dailyStats[d] || null;
+  }
+
+  // 특정 기간의 통계 조회
+  getStatsForDateRange(startDate: string, endDate: string): DailyStats[] {
+    const stats: DailyStats[] = [];
+    let currentDate = new Date(startDate);
+    const end = new Date(endDate);
+
+    while (currentDate <= end) {
+      const dateStr = currentDate.toISOString().split('T')[0];
+      if (this.dailyStats[dateStr]) {
+        stats.push(this.dailyStats[dateStr]);
+      }
+      currentDate.setDate(currentDate.getDate() + 1);
+    }
+
+    return stats;
+  }
+
+  // 사용자별 통계 조회
+  async getUserStats(userName: string, startDate: string, endDate: string): Promise<{
+    user: User | null;
+    stats: DailyStats[];
+    totalMeals: number;
+    totalImages: number;
+    averageCalories: number;
+    averageProtein: number;
+    averageCarbs: number;
+    averageFat: number;
+  }> {
+    const user = await storageService.getData('users', userName);
+    const stats = await this.getStatsForDateRange(startDate, endDate);
+    
+    const totalMeals = stats.reduce((sum, stat) => {
+      const meals = this.getMeals(stat.date);
+      return sum + meals.length;
+    }, 0);
+
+    const totalImages = stats.reduce((sum, stat) => sum + stat.imageCount, 0);
+    
+    const averageCalories = stats.reduce((sum, stat) => sum + stat.totalCalories, 0) / stats.length;
+    const averageProtein = stats.reduce((sum, stat) => sum + stat.totalProtein, 0) / stats.length;
+    const averageCarbs = stats.reduce((sum, stat) => sum + stat.totalCarbs, 0) / stats.length;
+    const averageFat = stats.reduce((sum, stat) => sum + stat.totalFat, 0) / stats.length;
+
+    return {
+      user: user ? User.fromJSON(user) : null,
+      stats,
+      totalMeals,
+      totalImages,
+      averageCalories,
+      averageProtein,
+      averageCarbs,
+      averageFat
+    };
+  }
+
+  // 모든 사용자의 통계 조회
+  async getAllUsersStats(startDate: string, endDate: string): Promise<{
+    userName: string;
+    totalMeals: number;
+    totalImages: number;
+    averageCalories: number;
+    averageProtein: number;
+    averageCarbs: number;
+    averageFat: number;
+  }[]> {
+    const users = await storageService.getData('users');
+    const stats: any[] = [];
+
+    for (const user of users) {
+      const userStats = await this.getUserStats(user.name, startDate, endDate);
+      stats.push({
+        userName: user.name,
+        totalMeals: userStats.totalMeals,
+        totalImages: userStats.totalImages,
+        averageCalories: userStats.averageCalories,
+        averageProtein: userStats.averageProtein,
+        averageCarbs: userStats.averageCarbs,
+        averageFat: userStats.averageFat
+      });
+    }
+
+    return stats;
   }
 } 

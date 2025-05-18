@@ -6,10 +6,11 @@ import { Macro } from '../models/Macro';
 interface SettingsModalProps {
   visible: boolean;
   onClose: () => void;
-  onSave: (settings: { totalCalories: number; macros: Macro[] }) => void;
+  onSave: (settings: { totalCalories: number; macros: Macro[]; userName: string }) => void;
   currentValues: {
     totalCalories: number;
     macros: Macro[];
+    userName: string;
   };
 }
 
@@ -27,8 +28,14 @@ const NUTRIENT_RATIO = {
   FAT: 2,      // 20%
 };
 
-export const SettingsModal: React.FC<SettingsModalProps> = ({ visible, onClose, onSave, currentValues }) => {
-  const [targetCalories, setTargetCalories] = useState(currentValues.totalCalories.toString());
+export const SettingsModal: React.FC<SettingsModalProps> = ({
+  visible,
+  onClose,
+  onSave,
+  currentValues
+}) => {
+  const [totalCalories, setTotalCalories] = useState(currentValues.totalCalories);
+  const [userName, setUserName] = useState(currentValues.userName);
 
   const calculateMacros = (calories: number) => {
     const totalRatio = NUTRIENT_RATIO.CARBS + NUTRIENT_RATIO.PROTEIN + NUTRIENT_RATIO.FAT;
@@ -49,7 +56,12 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({ visible, onClose, 
   };
 
   const handleSave = () => {
-    const calories = parseInt(targetCalories);
+    if (!userName.trim()) {
+      alert('이름을 입력해주세요.');
+      return;
+    }
+
+    const calories = parseInt(totalCalories.toString());
     const macros = calculateMacros(calories);
     
     onSave({
@@ -58,7 +70,8 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({ visible, onClose, 
         new Macro('Protein', 0, macros.protein, 'g', '#FF6B6B'),
         new Macro('Carbs', 0, macros.carbs, 'g', '#FFB169'),
         new Macro('Fat', 0, macros.fat, 'g', '#4DABF7'),
-      ]
+      ],
+      userName: userName.trim()
     });
     onClose();
   };
@@ -75,13 +88,23 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({ visible, onClose, 
           <ThemedText style={styles.modalTitle}>목표 설정</ThemedText>
           
           <View style={styles.inputContainer}>
-            <ThemedText>목표 칼로리 (kcal)</ThemedText>
+            <ThemedText>이름</ThemedText>
             <TextInput
               style={styles.input}
-              value={targetCalories}
-              onChangeText={setTargetCalories}
+              value={userName}
+              onChangeText={setUserName}
+              placeholder="이름을 입력하세요"
+            />
+          </View>
+
+          <View style={styles.inputContainer}>
+            <ThemedText>목표 칼로리</ThemedText>
+            <TextInput
+              style={styles.input}
+              value={totalCalories.toString()}
+              onChangeText={(text) => setTotalCalories(Number(text) || 0)}
               keyboardType="numeric"
-              placeholder="예: 2000"
+              placeholder="목표 칼로리 입력"
             />
           </View>
 

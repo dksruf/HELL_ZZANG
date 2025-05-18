@@ -154,6 +154,8 @@ import { Meal } from '../../models/Meal';
 import { NutritionTracker } from '../../services/NutritionTracker';
 import { apiService } from '../../services/api';
 import * as ImagePicker from 'expo-image-picker';
+import { storageService } from '../../services/StorageService';
+import { User } from '../../models/User';
 
 // ============================================================================
 // 모달 컴포넌트들을 임포트
@@ -178,7 +180,7 @@ import { styles } from '../../styles/index';
 interface SettingsModalProps {
   visible: boolean;
   onClose: () => void;
-  onSave: (settings: { totalCalories: number; macros: Macro[] }) => void;
+  onSave: (settings: { totalCalories: number; macros: Macro[]; userName: string }) => void;
   currentValues: {
     totalCalories: number;
     macros: Macro[];
@@ -345,12 +347,6 @@ export default function HomeScreen() {
   const today = getTodayString();
   const caloriePercentage = tracker.getCaloriePercentage();
   const caloriesLeft = tracker.getCaloriesLeft();
-  const macros = tracker.getMacros();
-  const totalCalories = tracker.getTotalCalories();
-  const consumedCalories = tracker.getMeals(today).reduce(
-    (total, meal) => total + meal.calories,
-    0
-  );
   const consumedMacros = tracker.getConsumedMacros(today);
 
   // ============================================================================
@@ -361,20 +357,32 @@ export default function HomeScreen() {
   // ============================================================================
   // 이벤트 핸들러 함수들
   // ============================================================================
-  const handleSettingsSave = async (settings: { totalCalories: number; macros: Macro[] }) => {
+  const handleSettingsSave = async (settings: {
+    totalCalories: number;
+    macros: Macro[];
+    userName: string;
+  }) => {
+    setTotalCalories(settings.totalCalories);
+    setMacros(settings.macros);
+    setUserName(settings.userName);
+    setModalVisible(false);
+
+    // NutritionTracker 업데이트
+    await tracker.updateSettings(settings.totalCalories, settings.macros);
+
+    // 설정 저장
     try {
-      // macros가 비어있거나, 칼로리만 바뀐 경우 자동 계산
-      let macros = settings.macros;
-      if (!macros || macros.length === 0) {
-        const calculated = calculateMacrosForCalories(settings.totalCalories);
-        macros = [
-          new Macro('Protein', 0, calculated.protein, 'g', MACRO_COLORS.Protein),
-          new Macro('Carbs', 0, calculated.carbs, 'g', MACRO_COLORS.Carbs),
-          new Macro('Fat', 0, calculated.fat, 'g', MACRO_COLORS.Fat),
-        ];
-      }
-      await tracker.updateSettings(settings.totalCalories, macros);
-      setModalVisible(false);
+      await storageService.saveData('settings', {
+        id: 'current',
+        totalCalories: settings.totalCalories,
+        macros: settings.macros,
+        userName: settings.userName
+      });
+      
+      // 화면 갱신
+      setRefreshKey(prev => prev + 1);
+      
+      // 성공 메시지 표시
       showAlert('성공', '설정이 저장되었습니다.');
     } catch (error) {
       console.error('설정 저장 실패:', error);
@@ -534,13 +542,41 @@ export default function HomeScreen() {
   // ============================================================================
   // 렌더링 부분
   // ============================================================================
+  const [totalCalories, setTotalCalories] = useState(DEFAULT_CALORIES);
+  const [macros, setMacros] = useState(initialMacros);
+  const [userName, setUserName] = useState('');
+  const [showSettings, setShowSettings] = useState(false);
   const [isReady, setIsReady] = useState(false);
 
   useEffect(() => {
     async function initialize() {
-      await tracker.init(); // 데이터 불러오기
-      setRefreshKey(prev => prev + 1); // 화면 새로고침
-      setIsReady(true);
+      try {
+        // 저장된 설정 불러오기
+        const settings = await storageService.getData('settings', 'current');
+        if (settings) {
+          setTotalCalories(settings.totalCalories);
+          setMacros(settings.macros);
+          setUserName(settings.userName);
+          
+          // NutritionTracker 업데이트
+          await tracker.updateSettings(settings.totalCalories, settings.macros);
+        }
+
+        // NutritionTracker 초기화
+        await tracker.init();
+        
+        // 현재 사용자 설정
+        if (settings?.userName) {
+          const user = new User(settings.userName);
+          await tracker.setCurrentUser(user);
+        }
+
+        setRefreshKey(prev => prev + 1); // 화면 새로고침
+        setIsReady(true);
+      } catch (error) {
+        console.error('초기화 실패:', error);
+        setIsReady(true); // 오류가 발생해도 앱은 실행
+      }
     }
     initialize();
   }, []);
@@ -560,7 +596,8 @@ export default function HomeScreen() {
         onSave={handleSettingsSave}
         currentValues={{
           totalCalories: tracker.getTotalCalories(),
-          macros: tracker.getMacros()
+          macros: tracker.getMacros(),
+          userName: userName
         }}
       />
 
@@ -661,9 +698,12 @@ export default function HomeScreen() {
 
       <ScrollView style={styles.content}>
         <CalorieCard
-          consumedCalories={consumedCalories}
-          caloriesLeft={caloriesLeft}
-          caloriePercentage={caloriePercentage}
+          consumedCalories={tracker.getMeals(today).reduce(
+            (total, meal) => total + meal.calories,
+            0
+          )}
+          caloriesLeft={tracker.getCaloriesLeft()}
+          caloriePercentage={tracker.getCaloriePercentage()}
         />
 
         <MacrosCard

@@ -1,4 +1,4 @@
-from fastapi import FastAPI, File, UploadFile
+from fastapi import FastAPI, File, UploadFile, Body, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 import tensorflow as tf
 import numpy as np
@@ -8,6 +8,8 @@ import io
 from fastapi.responses import HTMLResponse
 import os
 from tensorflow.keras.applications.mobilenet_v2 import preprocess_input
+import json
+from datetime import datetime
 
 #==================================================================================================================#
 class_names = ["아몬드","삶은계란", "닭가슴살", "계란후라이","잡곡밥", "돼지고기", "고구마","토마토","백미밥"] # -> 음식 인덱스. 아마도 이렇게
@@ -225,14 +227,14 @@ def classify_food(image_bytes):
         # CLASS_LABELS에서 직접 음식 이름 가져오기
         try:
             food_name = food_df["food_name"][predicted_class]
-            korean_name = food_df["korean_name"][predicted_class]
+            name = food_df["korean_name"][predicted_class]
         except IndexError:
             food_name = "Unknown"
-            korean_name = "알 수 없음"
+            name = "알 수 없음"
             print(f"IndexError: Predicted class {predicted_class} out of range for {len(food_df)} classes")
 
-        print(f"Predicted class: {predicted_class}, Food: {food_name}, Korean: {korean_name}, Confidence: {confidence}")
-        return food_name, korean_name, confidence
+        print(f"Predicted class: {predicted_class}, Food: {food_name}, Name: {name}, Confidence: {confidence}")
+        return food_name, name, confidence
     except Exception as e:
         print(f"분류 오류: {str(e)}")
         # 기본값 반환
@@ -256,8 +258,8 @@ async def predict(file: UploadFile = File(...)):
             print("이미지 데이터가 비어 있습니다.")
             return {"error": "이미지 데이터가 비어 있습니다."}
             
-        food_name, korean_name, confidence = classify_food(image_bytes)
-        print(f"분류 결과: {food_name}({korean_name}), 신뢰도: {confidence}")  # 분류 결과 출력
+        food_name, name, confidence = classify_food(image_bytes)
+        print(f"분류 결과: {food_name}({name}), 신뢰도: {confidence}")  # 분류 결과 출력
 
         food_info = get_food_info(food_name)
         print(f"음식 정보: {food_info}")  # 음식 정보 출력
@@ -265,14 +267,14 @@ async def predict(file: UploadFile = File(...)):
         if food_info:
             return {
                 "food": food_name,
-                "koreanName": korean_name,
+                "name": name,
                 "confidence": float(confidence),
                 **food_info
             }
         else:
             return {
                 "food": food_name,
-                "koreanName": korean_name,
+                "name": name,
                 "confidence": float(confidence),
                 "message": "영양 정보 없음"
             }
@@ -303,7 +305,101 @@ async def get_food_info_endpoint(food_name: str):
 async def test_endpoint():
     print("테스트 엔드포인트 호출됨")
     return {"message": "test"}
+#==================================================================================================================#
+#=========================================== 사용자 로그 저장 디렉토리 설정 ===========================================#
+#==================================================================================================================#
+USER_LOGS_DIR = './user_logs'
 
+# 사용자별 로그 저장 API
+@app.post('/user-logs/{user_name}')
+async def save_user_log(user_name: str, data: dict = Body(...)):
+    try:
+        # 사용자 디렉토리 생성
+        user_dir = os.path.join(USER_LOGS_DIR, user_name)
+        os.makedirs(user_dir, exist_ok=True)
+        
+        # 오늘 날짜로 파일명 생성
+        today = datetime.now().strftime('%Y-%m-%d')
+        file_path = os.path.join(user_dir, f'{today}.json')
+        
+        # imageUri 제외하고 데이터 복사
+        meal_data = {k: v for k, v in data.items() if k != 'imageUri'}
+        
+        # 기존 데이터가 있으면 로드, 없으면 새로 생성
+        if os.path.exists(file_path):
+            with open(file_path, 'r', encoding='utf-8') as f:
+                existing_data = json.load(f)
+        else:
+            # 첫 번째 식사 추가 시에만 목표값 저장
+            existing_data = {
+                'userName': user_name,
+                'date': today,
+                'meals': [],
+                'goalCalories': data.get('goalCalories', 0),
+                'goalProtein': data.get('goalProtein', 0),
+                'goalCarbs': data.get('goalCarbs', 0),
+                'goalFat': data.get('goalFat', 0),
+                'totalCalories': 0,
+                'totalProtein': 0,
+                'totalCarbs': 0,
+                'totalFat': 0
+            }
+        
+        # 새 식사 데이터 추가 (imageUri와 goal 관련 필드 제외)
+        meal_data = {k: v for k, v in meal_data.items() if not k.startswith('goal')}
+        existing_data['meals'].append(meal_data)
+        
+        # 총 칼로리/영양소 업데이트
+        existing_data['totalCalories'] += data.get('calories', 0)
+        existing_data['totalProtein'] += data.get('protein', 0)
+        existing_data['totalCarbs'] += data.get('carbs', 0)
+        existing_data['totalFat'] += data.get('fat', 0)
+        
+        # 파일 저장
+        with open(file_path, 'w', encoding='utf-8') as f:
+            json.dump(existing_data, f, ensure_ascii=False, indent=2)
+        
+        return {"message": "로그 저장 완료", "file": file_path}
+    
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+# 사용자별 로그 조회 API
+@app.get('/user-logs/{user_name}/{date}')
+async def get_user_log(user_name: str, date: str):
+    try:
+        file_path = os.path.join(USER_LOGS_DIR, user_name, f'{date}.json')
+        if not os.path.exists(file_path):
+            return {"message": "해당 날짜의 기록이 없습니다."}
+        
+        with open(file_path, 'r', encoding='utf-8') as f:
+            data = json.load(f)
+        return data
+    
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+# 사용자별 전체 로그 조회 API
+@app.get('/user-logs/{user_name}')
+async def get_all_user_logs(user_name: str):
+    try:
+        user_dir = os.path.join(USER_LOGS_DIR, user_name)
+        if not os.path.exists(user_dir):
+            return {"message": "해당 사용자의 기록이 없습니다."}
+        
+        logs = []
+        for file_name in os.listdir(user_dir):
+            if file_name.endswith('.json'):
+                with open(os.path.join(user_dir, file_name), 'r', encoding='utf-8') as f:
+                    logs.append(json.load(f))
+        
+        return logs
+    
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+#==================================================================================================================#
+#=========================================== 사용자 로그 저장 디렉토리 설정 ===========================================#
+#==================================================================================================================#
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run(app, host="localhost", port=8081)

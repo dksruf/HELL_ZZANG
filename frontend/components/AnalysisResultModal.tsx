@@ -167,8 +167,7 @@ export const AnalysisResultModal: React.FC<AnalysisResultModalProps> = ({
               <View style={{ padding: 24 }}>
                 <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
                   <View>
-                    <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#222' }}>{koreanName}</Text>
-                    <Text style={{ fontSize: 16, color: '#666', marginTop: 4 }}>{name}</Text>
+                    <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#222' }}>{name}</Text>
                   </View>
                   <View style={{ flexDirection: 'row', alignItems: 'center', backgroundColor: '#fafafa', borderRadius: 16, paddingHorizontal: 8, paddingVertical: 4 }}>
                     <TouchableOpacity onPress={decrement} style={{ padding: 8 }}>

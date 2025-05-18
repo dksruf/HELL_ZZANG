@@ -37,6 +37,12 @@ export class StorageService {
         if (!db.objectStoreNames.contains('settings')) {
           db.createObjectStore('settings', { keyPath: 'id' });
         }
+        if (!db.objectStoreNames.contains('dailyStats')) {
+          db.createObjectStore('dailyStats', { keyPath: 'date' });
+        }
+        if (!db.objectStoreNames.contains('users')) {
+          db.createObjectStore('users', { keyPath: 'name' });
+        }
       };
     });
   }
