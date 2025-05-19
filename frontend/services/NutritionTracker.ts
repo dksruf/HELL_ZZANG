@@ -230,7 +230,7 @@ export class NutritionTracker {
         return;
       }
 
-      const response = await fetch(`http://localhost:8000/user-logs/${this.currentUser.name}`, {
+      const response = await fetch(`https://large-bold-lioness.ngrok-free.app/user-logs/${this.currentUser.name}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
