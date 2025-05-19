@@ -1,3 +1,4 @@
+import csv
 from fastapi import FastAPI, File, UploadFile, Body, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 import tensorflow as tf
@@ -30,6 +31,9 @@ app.add_middleware(
 
 # CSV 파일 로드
 food_df = pd.read_csv("food_df.csv")  # CSV 파일에 음식, 칼로리, 영양성분 정보가 있어야 함
+f = open("food_index.csv", "r", encoding="utf-8")
+reader = csv.reader(f)
+food_index = list(reader)[0] # 음식 인덱스 정보
 #food_df = pd.read_csv("food_info.csv")  # CSV 파일에 음식, 칼로리, 영양성분 정보가 있어야 함
 #food_li = pd.read_csv("food_list.csv")
 
@@ -60,7 +64,7 @@ def create_model ():
     x = tf.keras.layers.Dense(128, activation='relu')(pretrained_model.output)
     x = tf.keras.layers.Dense(128, activation='relu')(x)
 
-    outputs = tf.keras.layers.Dense(9, activation='softmax')(x)  # 9개 클래스로 수정
+    outputs = tf.keras.layers.Dense(len(food_index), activation='softmax')(x)  # 9개 클래스로 수정
     #outputs = tf.keras.layers.Dense(107, activation='softmax')(x)
 
     model = tf.keras.Model(inputs, outputs)
@@ -226,12 +230,12 @@ def classify_food(image_bytes):
 
         # CLASS_LABELS에서 직접 음식 이름 가져오기
         try:
-            food_name = food_df["food_name"][predicted_class]
-            name = food_df["korean_name"][predicted_class]
+            food_name = food_index[predicted_class]
+            name = food_index[predicted_class]
         except IndexError:
             food_name = "Unknown"
             name = "알 수 없음"
-            print(f"IndexError: Predicted class {predicted_class} out of range for {len(food_df)} classes")
+            print(f"IndexError: Predicted class {predicted_class} out of range for {len(food_index)} classes")
 
         print(f"Predicted class: {predicted_class}, Food: {food_name}, Name: {name}, Confidence: {confidence}")
         return food_name, name, confidence
