@@ -169,20 +169,37 @@ export const AnalysisResultModal: React.FC<AnalysisResultModalProps> = ({
                   <View>
                     <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#222' }}>{name}</Text>
                   </View>
-                  <View style={{ flexDirection: 'row', alignItems: 'center', backgroundColor: '#fafafa', borderRadius: 16, paddingHorizontal: 8, paddingVertical: 4 }}>
-                    <TouchableOpacity onPress={decrement} style={{ padding: 8 }}>
-                      <Text style={{ fontSize: 20, color: '#666' }}>-</Text>
+                  <View style={{
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    backgroundColor: '#fafafa',
+                    borderRadius: 16,
+                    paddingHorizontal: 2,
+                    paddingVertical: 2,
+                    flexShrink: 1,
+                    maxWidth: 140,
+                  }}>
+                    <TouchableOpacity onPress={decrement} style={{ padding: 2 }}>
+                      <Text style={{ fontSize: 14, color: '#666' }}>-</Text>
                     </TouchableOpacity>
                     <TextInput
-                      style={{ fontSize: 16, marginHorizontal: 12, minWidth: 48, textAlign: 'center', paddingVertical: 0, paddingHorizontal: 0 }}
+                      style={{
+                        fontSize: 14,
+                        marginHorizontal: 0,
+                        minWidth: 0,
+                        flex: 1,
+                        textAlign: 'center',
+                        paddingVertical: 0,
+                        paddingHorizontal: 0,
+                      }}
                       value={grams.toString()}
                       onChangeText={text => setGrams(Number(text) || 0)}
                       keyboardType="numeric"
                       returnKeyType="done"
                     />
-                    <Text style={{ fontSize: 16, color: '#666' }}>g</Text>
-                    <TouchableOpacity onPress={increment} style={{ padding: 8 }}>
-                      <Text style={{ fontSize: 20, color: '#666' }}>+</Text>
+                    <Text style={{ fontSize: 14, color: '#666' }}>g</Text>
+                    <TouchableOpacity onPress={increment} style={{ padding: 2 }}>
+                      <Text style={{ fontSize: 14, color: '#666' }}>+</Text>
                     </TouchableOpacity>
                   </View>
                 </View>
@@ -207,18 +224,24 @@ export const AnalysisResultModal: React.FC<AnalysisResultModalProps> = ({
                     <Text style={{ fontWeight: 'bold', fontSize: 16 }}>{fats}g</Text>
                   </View>
                 </View>
-                <View style={{ flexDirection: 'row', gap: 12, marginTop: 12 }}>
+                <View style={{ flexDirection: 'row', gap: 6, marginTop: 12 }}>
                   <TouchableOpacity
-                    style={{ flex: 1, backgroundColor: '#f5f5f5', borderRadius: 12, padding: 18, alignItems: 'center' }}
-                    onPress={() => setShowDescribeModal(true)}
+                    style={{ flex: 1, backgroundColor: '#FFE5E5', borderRadius: 8, padding: 12, alignItems: 'center' }}
+                    onPress={onClose}
                   >
-                    <Text style={{ color: '#222', fontSize: 16 }}>Fix Results</Text>
+                    <Text style={{ color: '#FF6B6B', fontSize: 14 }}>Cancel</Text>
                   </TouchableOpacity>
                   <TouchableOpacity
-                    style={{ flex: 1, backgroundColor: '#000', borderRadius: 12, padding: 18, alignItems: 'center' }}
+                    style={{ flex: 1, backgroundColor: '#f5f5f5', borderRadius: 8, padding: 12, alignItems: 'center' }}
+                    onPress={() => setShowDescribeModal(true)}
+                  >
+                    <Text style={{ color: '#222', fontSize: 14 }}>Fix</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    style={{ flex: 1, backgroundColor: '#000', borderRadius: 8, padding: 12, alignItems: 'center' }}
                     onPress={handleSave}
                   >
-                    <Text style={{ color: '#fff', fontSize: 16 }}>Done</Text>
+                    <Text style={{ color: '#fff', fontSize: 14 }}>Done</Text>
                   </TouchableOpacity>
                 </View>
               </View>

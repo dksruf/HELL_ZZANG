@@ -257,7 +257,7 @@ export const AddMealModal: React.FC<AddMealModalProps> = ({
       </View>
       
       <View style={globalStyles.inputContainer}>
-        <ThemedText style={globalStyles.inputLabel}>100g 당 칼로리 (kcal)</ThemedText>
+        <ThemedText style={globalStyles.inputLabel}>칼로리 (kcal)</ThemedText>
         <TextInput
           style={globalStyles.largeInput}
           placeholder="예: 350"
@@ -269,7 +269,7 @@ export const AddMealModal: React.FC<AddMealModalProps> = ({
       </View>
       
       <View style={globalStyles.inputContainer}>
-        <ThemedText style={globalStyles.inputLabel}>영양소 정보 (100g 당)</ThemedText>
+        <ThemedText style={globalStyles.inputLabel}>영양소 정보</ThemedText>
         <View style={globalStyles.macroInputWrapper}>
           <View style={globalStyles.macroInputItem}>
             <ThemedText style={globalStyles.macroInputLabel}>
