@@ -135,13 +135,26 @@ export const AnalysisResultModal: React.FC<AnalysisResultModalProps> = ({
     // handleSave() 호출하지 않음
   };
 
+  const handleClose = () => {
+    // Reset all state values to base values
+    setImageUri(initialImageUri);
+    setName(initialName);
+    setKoreanName(initialKoreanName || initialName);
+    setCalories(baseCalories);
+    setProtein(baseProtein);
+    setCarbs(baseCarbs);
+    setFats(baseFats);
+    setGrams(baseGrams);
+    onClose();
+  };
+
   return (
     <>
       <Modal
         visible={visible}
         transparent={true}
         animationType="slide"
-        onRequestClose={onClose}
+        onRequestClose={handleClose}
       >
         <View style={globalStyles.modalOverlay}>
           <View style={[globalStyles.modalContent, { 
@@ -227,7 +240,7 @@ export const AnalysisResultModal: React.FC<AnalysisResultModalProps> = ({
                 <View style={{ flexDirection: 'row', gap: 6, marginTop: 12 }}>
                   <TouchableOpacity
                     style={{ flex: 1, backgroundColor: '#FFE5E5', borderRadius: 8, padding: 12, alignItems: 'center' }}
-                    onPress={onClose}
+                    onPress={handleClose}
                   >
                     <Text style={{ color: '#FF6B6B', fontSize: 14 }}>Cancel</Text>
                   </TouchableOpacity>
