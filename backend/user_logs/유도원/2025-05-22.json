@@ -1,0 +1,104 @@
+{
+  "userName": "유도원",
+  "date": "2025-05-22",
+  "meals": [
+    {
+      "name": "고구마",
+      "calories": 448,
+      "protein": 6,
+      "carbs": 106,
+      "fat": 1,
+      "grams": 350,
+      "date": "2025-05-21",
+      "hasImage": true
+    },
+    {
+      "name": "삶은계란",
+      "calories": 308,
+      "protein": 25,
+      "carbs": 2,
+      "fat": 21,
+      "grams": 200,
+      "date": "2025-05-21",
+      "hasImage": true
+    },
+    {
+      "name": "틸라피아",
+      "calories": 171,
+      "protein": 36,
+      "carbs": 0,
+      "fat": 3,
+      "grams": 178,
+      "date": "2025-05-22",
+      "hasImage": true
+    },
+    {
+      "name": "잡곡밥",
+      "calories": 489,
+      "protein": 13,
+      "carbs": 105,
+      "fat": 3,
+      "grams": 300,
+      "date": "2025-05-22",
+      "hasImage": true
+    },
+    {
+      "name": "닭가슴살",
+      "calories": 136,
+      "protein": 29,
+      "carbs": 0,
+      "fat": 2,
+      "grams": 125,
+      "date": "2025-05-22",
+      "hasImage": true
+    },
+    {
+      "name": "흰쌀밥",
+      "calories": 429,
+      "protein": 8,
+      "carbs": 93,
+      "fat": 1,
+      "grams": 300,
+      "date": "2025-05-22",
+      "hasImage": true
+    },
+    {
+      "name": "닭가슴살",
+      "calories": 142,
+      "protein": 30,
+      "carbs": 0,
+      "fat": 2,
+      "grams": 130,
+      "date": "2025-05-22",
+      "hasImage": true
+    },
+    {
+      "name": "잡곡밥",
+      "calories": 978,
+      "protein": 25,
+      "carbs": 211,
+      "fat": 6,
+      "grams": 600,
+      "date": "2025-05-22",
+      "hasImage": true
+    },
+    {
+      "name": "흰쌀밥",
+      "calories": 858,
+      "protein": 16,
+      "carbs": 186,
+      "fat": 3,
+      "grams": 600,
+      "date": "2025-05-22",
+      "hasImage": true
+    }
+  ],
+  "goalCalories": 3050,
+  "goalProtein": 229,
+  "goalCarbs": 381,
+  "goalFat": 68,
+  "totalCalories": 3959,
+  "totalProtein": 188,
+  "totalCarbs": 703,
+  "totalFat": 42
+}

@@ -1,0 +1,104 @@
+{
+  "userName": "test",
+  "date": "2025-05-23",
+  "meals": [
+    {
+      "name": "블루베리",
+      "calories": 51,
+      "protein": 0,
+      "carbs": 12,
+      "fat": 1,
+      "grams": 100,
+      "date": "2025-05-23",
+      "hasImage": true
+    },
+    {
+      "name": "블루베리",
+      "calories": 153,
+      "protein": 1,
+      "carbs": 37,
+      "fat": 2,
+      "grams": 300,
+      "date": "2025-05-23",
+      "hasImage": true
+    },
+    {
+      "name": "fried egg",
+      "calories": 89,
+      "protein": 6,
+      "carbs": 0,
+      "fat": 7,
+      "grams": 100,
+      "date": "2025-05-23",
+      "hasImage": true
+    },
+    {
+      "name": "블루베리",
+      "calories": 153,
+      "protein": 1,
+      "carbs": 37,
+      "fat": 2,
+      "grams": 300,
+      "date": "2025-05-23",
+      "hasImage": true
+    },
+    {
+      "name": "블루베리",
+      "calories": 153,
+      "protein": 1,
+      "carbs": 37,
+      "fat": 2,
+      "grams": 300,
+      "date": "2025-05-23",
+      "hasImage": true
+    },
+    {
+      "name": "fried egg",
+      "calories": 89,
+      "protein": 6,
+      "carbs": 0,
+      "fat": 7,
+      "grams": 100,
+      "date": "2025-05-23",
+      "hasImage": true
+    },
+    {
+      "name": "블루베리",
+      "calories": 51,
+      "protein": 0,
+      "carbs": 12,
+      "fat": 1,
+      "grams": 100,
+      "date": "2025-05-23",
+      "hasImage": true
+    },
+    {
+      "name": "fried egg",
+      "calories": 89,
+      "protein": 6,
+      "carbs": 0,
+      "fat": 7,
+      "grams": 100,
+      "date": "2025-05-23",
+      "hasImage": true
+    },
+    {
+      "name": "블루베리",
+      "calories": 102,
+      "protein": 1,
+      "carbs": 24,
+      "fat": 1,
+      "grams": 200,
+      "date": "2025-05-23",
+      "hasImage": true
+    }
+  ],
+  "goalCalories": 2600,
+  "goalProtein": 195,
+  "goalCarbs": 325,
+  "goalFat": 58,
+  "totalCalories": 930,
+  "totalProtein": 22,
+  "totalCarbs": 159,
+  "totalFat": 30
+}

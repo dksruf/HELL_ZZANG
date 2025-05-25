@@ -1,0 +1,24 @@
+{
+  "userName": "안결",
+  "date": "2025-05-19",
+  "meals": [
+    {
+      "name": "잡곡밥",
+      "calories": 326,
+      "protein": 8,
+      "carbs": 70,
+      "fat": 2,
+      "grams": 200,
+      "date": "2025-05-19",
+      "hasImage": true
+    }
+  ],
+  "goalCalories": 2608,
+  "goalProtein": 196,
+  "goalCarbs": 326,
+  "goalFat": 58,
+  "totalCalories": 326,
+  "totalProtein": 8,
+  "totalCarbs": 70,
+  "totalFat": 2
+}

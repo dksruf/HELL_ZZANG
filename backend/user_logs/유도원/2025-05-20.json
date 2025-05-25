@@ -1,0 +1,144 @@
+{
+  "userName": "유도원",
+  "date": "2025-05-20",
+  "meals": [
+    {
+      "name": "잡곡밥",
+      "calories": 489,
+      "protein": 13,
+      "carbs": 105,
+      "fat": 3,
+      "grams": 300,
+      "date": "2025-05-20",
+      "hasImage": true
+    },
+    {
+      "name": "계란후라이",
+      "calories": 89,
+      "protein": 6,
+      "carbs": 0,
+      "fat": 7,
+      "grams": 100,
+      "date": "2025-05-20",
+      "hasImage": true
+    },
+    {
+      "name": "삶은계란",
+      "calories": 154,
+      "protein": 13,
+      "carbs": 1,
+      "fat": 11,
+      "grams": 100,
+      "date": "2025-05-20",
+      "hasImage": true
+    },
+    {
+      "name": "계란후라이",
+      "calories": 89,
+      "protein": 6,
+      "carbs": 0,
+      "fat": 7,
+      "grams": 100,
+      "date": "2025-05-20",
+      "hasImage": true
+    },
+    {
+      "name": "아몬드",
+      "calories": 578,
+      "protein": 21,
+      "carbs": 20,
+      "fat": 51,
+      "grams": 100,
+      "date": "2025-05-20",
+      "hasImage": true
+    },
+    {
+      "name": "아몬드",
+      "calories": 578,
+      "protein": 21,
+      "carbs": 20,
+      "fat": 51,
+      "grams": 100,
+      "date": "2025-05-20",
+      "hasImage": true
+    },
+    {
+      "name": "흰쌀밥",
+      "calories": 143,
+      "protein": 3,
+      "carbs": 31,
+      "fat": 0,
+      "grams": 100,
+      "date": "2025-05-20",
+      "hasImage": true
+    },
+    {
+      "name": "흰쌀밥",
+      "calories": 143,
+      "protein": 3,
+      "carbs": 31,
+      "fat": 0,
+      "grams": 100,
+      "date": "2025-05-20",
+      "hasImage": true
+    },
+    {
+      "name": "흰쌀밥",
+      "calories": 143,
+      "protein": 3,
+      "carbs": 31,
+      "fat": 0,
+      "grams": 100,
+      "date": "2025-05-20",
+      "hasImage": true
+    },
+    {
+      "name": "소고기쌀국수",
+      "calories": 347,
+      "protein": 7,
+      "carbs": 72,
+      "fat": 4,
+      "grams": 100,
+      "date": "2025-05-20",
+      "hasImage": true
+    },
+    {
+      "name": "틸라피아",
+      "calories": 96,
+      "protein": 20,
+      "carbs": 0,
+      "fat": 2,
+      "grams": 100,
+      "date": "2025-05-20",
+      "hasImage": true
+    },
+    {
+      "name": "소고기쌀국수",
+      "calories": 347,
+      "protein": 7,
+      "carbs": 72,
+      "fat": 4,
+      "grams": 100,
+      "date": "2025-05-20",
+      "hasImage": true
+    },
+    {
+      "name": "플레인베이글",
+      "calories": 945,
+      "protein": 39,
+      "carbs": 189,
+      "fat": 4,
+      "grams": 300,
+      "date": "2025-05-20",
+      "hasImage": true
+    }
+  ],
+  "goalCalories": 3380,
+  "goalProtein": 254,
+  "goalCarbs": 423,
+  "goalFat": 75,
+  "totalCalories": 4141,
+  "totalProtein": 162,
+  "totalCarbs": 572,
+  "totalFat": 144
+}
