@@ -30,11 +30,11 @@ AI 기반 무료 칼로리 추적 및 식단 관리 애플리케이션
 
 ```mermaid
 graph TD
-    A[📱 React Native App] -->|HTTP Request| B(⚙️ FastAPI Server);
-    B -->|Image Data| C(🤖 AI Model);
+    A["📱 React Native App"] -->|HTTP Request| B("⚙️ FastAPI Server");
+    B -->|Image Data| C("🤖 AI Model");
     C -->|Prediction Result| B;
     B -->|Nutrition Data| A;
-    B -->|Save/Load| D[📄 User Logs (JSON)];
+    B -->|Save/Load| D["📄 User Logs (JSON)"];
 ```
 
 ### 기술 스택
